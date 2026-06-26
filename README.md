@@ -154,16 +154,6 @@ Covers all three required layers:
 - **Business logic** — the Adaptive Learning Engine's Elo difficulty, hint-frequency, and Pomodoro session/break formulas, exercised with mocked signal inputs (`elo.test.ts`, `hintFrequency.test.ts`, `pomodoroEngine.test.ts`, `battleEngine.test.ts`).
 - **UI/screen smoke test** — a full Onboarding → Map → Phase 2 → Battle Loop → Pomodoro walkthrough (`navigationSmoke.test.tsx`).
 
-## Known limitations
-
-- **No persistence.** All state (profile, Elo rating, Pomodoro history) is in-memory only and resets on app restart, by design — restarting and re-selecting a player is the documented crash-recovery path.
-- **Only Level 3 is playable.** Levels 1–2 are pre-completed map stubs; levels 4–15 are locked/coming-soon placeholders. This is the PRD's locked scope decision for the hackathon build, not a bug.
-- **No Grades 4–6 content.** Scope is locked to Grade 1, Quarter 1, Numbers and Number Sense (visualizing 0–100, one-more/one-less, regrouping).
-- **No teacher/parent view.** Student-only by design; out of scope for this MVP.
-- **Chatbot is hardcoded.** The Phase 2 chat bubble is a pure lookup table, not a live model call — a Gemini API integration is on the roadmap, not in this build.
-- **Placeholder folklore art.** The bundled character art (`Buboy`/`Sigbin`) predates the final Tikbalang/Aswang/Kapre naming — swap in final art via `app/common/theme/characterArt.ts` once ready.
-- **Number-sense and one-more-one-less question banks ship bundled but aren't yet wired to a second playable level** — only Level 3's regrouping battle is playable in this build.
-
 ---
 
 ## References
