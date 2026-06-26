@@ -55,7 +55,7 @@ A complete vertical slice, playable end to end:
 
 - **Onboarding** — 3 pre-seeded player profiles (Player 1 & 2: all 3 levels beaten, full adherence history; Player 3: levels 1–2 done, drops fresh into Level 3).
 - **Map** — 15 level nodes; only Level 3 ("Bukid ng Bayabas", vs. Kapre) is playable, levels 4–15 are visible but locked/coming-soon.
-- **Phase 2 — Interactive Learning** — a 5-beat calm primer (unsorted pile → auto-grouping into tens → leftover ones → equation read-out → "Let's go") built from Module 3's santol-grouping example, with a hardcoded-response chatbot icon.
+- **Phase 2 — Interactive Learning** — a 5-beat calm primer (unsorted pile → auto-grouping into tens → leftover ones → equation read-out → "Let's go") built from Module 3's santol-grouping example, with an "Ask Tuklas" chat side-panel students can open mid-lesson to ask a question.
 - **Battle Loop** — a 5-question DepEd-aligned regrouping quiz against Kapre. Wrong answers retry (no hard fail); the **Adaptive Learning Engine** (Elo-based difficulty, derived hint frequency) adjusts live and surfaces a mandatory on-screen "Tuklas noticed..." banner (English + Tagalog) every time it acts.
 - **Pomodoro + adherence tracking** — adaptive session/break length (bounded around the 25/5 Cirillo baseline), streak counter, and a calendar heatmap of session history.
 - **Character roster** — Tikbalang / Aswang / Kapre, locked vs. unlocked.
@@ -113,7 +113,7 @@ Rolling average over the last 3 sessions (`pomodoroEngine.ts`). Cold start defau
 | Navigation | React Navigation (native-stack) | |
 | State | Zustand, in-memory only | No backend — client state is the database |
 | Data | Bundled JSON (`data/*.json`) | Zero network dependency |
-| Backend | None — chatbot is a hardcoded lookup table | Roadmap: swap in a live Gemini API call for the Phase 2 chatbot |
+| Backend | None — chatbot panel UI is in place; replies are a hardcoded lookup table for now | Roadmap: swap in a live Gemini API call behind the existing chat panel |
 | Auth | None | Student-only, session-only |
 | Testing | Jest + jest-expo + React Native Testing Library | |
 | Deployment | Expo Go + EAS Build | Expo Go sufficient for judging |

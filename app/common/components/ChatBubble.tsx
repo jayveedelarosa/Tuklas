@@ -1,33 +1,33 @@
 import React, { useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, spacing } from '../theme/colors';
-import { ChatbotResponse } from '../../features/learning/models/chatbot';
-import { getResponseForBeat } from '../../features/learning/repository/chatbotRepository';
+import { colors, spacing } from '../theme/colors';
+import { ChatPanel } from './ChatPanel';
 
 interface ChatBubbleProps {
   currentBeat: number | null;
+  /** Seam for the teammate wiring up real bot logic — forwarded from ChatPanel. */
+  onSendMessage?: (text: string) => void;
 }
 
-/** Hardcoded-response chatbot icon shown through Phase 2 — no live API call. */
-export function ChatBubble({ currentBeat }: ChatBubbleProps) {
-  const [response, setResponse] = useState<ChatbotResponse | null>(null);
-
-  const handlePress = () => {
-    setResponse(getResponseForBeat(currentBeat));
-  };
+/** Chat entry point icon shown through Phase 2 — opens the slide-in ChatPanel, no live API call. */
+export function ChatBubble({ currentBeat, onSendMessage }: ChatBubbleProps) {
+  const [panelOpen, setPanelOpen] = useState(false);
 
   return (
-    <View style={styles.wrapper} pointerEvents="box-none">
-      {response ? (
-        <Pressable style={styles.bubble} onPress={() => setResponse(null)} testID="chatbot-bubble-message">
-          <Text style={styles.bubbleEn}>{response.displayTextEn}</Text>
-          <Text style={styles.bubbleTl}>{response.displayText}</Text>
+    <>
+      <View style={styles.wrapper} pointerEvents="box-none">
+        <Pressable style={styles.icon} onPress={() => setPanelOpen(true)} testID="chatbot-icon">
+          <Text style={styles.iconGlyph}>💬</Text>
         </Pressable>
-      ) : null}
-      <Pressable style={styles.icon} onPress={handlePress} testID="chatbot-icon">
-        <Text style={styles.iconGlyph}>💬</Text>
-      </Pressable>
-    </View>
+      </View>
+
+      <ChatPanel
+        visible={panelOpen}
+        onClose={() => setPanelOpen(false)}
+        currentBeat={currentBeat}
+        onSendMessage={onSendMessage}
+      />
+    </>
   );
 }
 
@@ -43,15 +43,4 @@ const styles = StyleSheet.create({
     elevation: 6,
   },
   iconGlyph: { fontSize: 24 },
-  bubble: {
-    maxWidth: 220,
-    backgroundColor: colors.surface,
-    borderRadius: radii.md,
-    borderWidth: 2,
-    borderColor: colors.border,
-    padding: spacing.sm,
-    marginBottom: spacing.sm,
-  },
-  bubbleEn: { fontSize: 13, fontWeight: '700', color: colors.textDark },
-  bubbleTl: { fontSize: 12, color: colors.textMuted, marginTop: 2 },
 });
