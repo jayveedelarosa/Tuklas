@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Image, Pressable, StyleSheet, View } from 'react-native';
 import { colors, spacing } from '../theme/colors';
+import { uiIcons } from '../theme/uiIcons';
 import { ChatPanel } from './ChatPanel';
 
 interface ChatBubbleProps {
@@ -17,7 +18,7 @@ export function ChatBubble({ currentBeat, onSendMessage }: ChatBubbleProps) {
     <>
       <View style={styles.wrapper} pointerEvents="box-none">
         <Pressable style={styles.icon} onPress={() => setPanelOpen(true)} testID="chatbot-icon">
-          <Text style={styles.iconGlyph}>💬</Text>
+          <Image source={uiIcons.chatBubble} style={styles.iconGlyph} />
         </Pressable>
       </View>
 
@@ -42,5 +43,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     elevation: 6,
   },
-  iconGlyph: { fontSize: 24 },
+  iconGlyph: { width: 24, height: 24, resizeMode: 'contain' },
 });

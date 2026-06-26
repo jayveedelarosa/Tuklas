@@ -1,6 +1,7 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, Image, StyleSheet, View } from 'react-native';
 import { colors, radii, spacing } from '../theme/colors';
+import { uiIcons } from '../theme/uiIcons';
 import { BilingualText } from './BilingualText';
 import { TopicId } from '../../features/topics/models/question';
 
@@ -9,27 +10,84 @@ interface QuestionCardProps {
   promptTagalog: string;
   topicId: TopicId;
   variant?: 'default' | 'battle';
+  showHint?: boolean;
+  hintEn?: string;
+  hintTl?: string;
 }
 
-const TOPIC_GLYPHS: Record<TopicId, string> = {
-  'number-sense': '🔢',
-  'one-more-one-less': '🥭',
-  regrouping: '🟢',
+const TOPIC_GLYPHS: Record<TopicId, typeof uiIcons[keyof typeof uiIcons]> = {
+  'number-sense': uiIcons.numberSense,
+  'one-more-one-less': uiIcons.mango,
+  regrouping: uiIcons.guava,
 };
 
-/** Visual aid (per UI spec) is a themed glyph band above the prompt — real illustrations are a post-hackathon swap. */
-export function QuestionCard({ prompt, promptTagalog, topicId, variant = 'default' }: QuestionCardProps) {
+const HINT_ANIM_MS = 180;
+
+export function QuestionCard({
+  prompt,
+  promptTagalog,
+  topicId,
+  variant = 'default',
+  showHint,
+  hintEn,
+  hintTl,
+}: QuestionCardProps) {
   const battle = variant === 'battle';
+  const hintOpacity = useRef(new Animated.Value(0)).current;
+  const hintTranslateY = useRef(new Animated.Value(-6)).current;
+
+  useEffect(() => {
+    if (!battle) return;
+    if (showHint) {
+      Animated.parallel([
+        Animated.timing(hintOpacity, {
+          toValue: 1,
+          duration: HINT_ANIM_MS,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(hintTranslateY, {
+          toValue: 0,
+          duration: HINT_ANIM_MS,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      hintOpacity.setValue(0);
+      hintTranslateY.setValue(-6);
+    }
+  }, [showHint, battle, hintOpacity, hintTranslateY]);
+
   return (
     <View style={[styles.card, battle && styles.cardBattle]} testID="question-card">
-      {!battle && <Text style={styles.visualAid}>{TOPIC_GLYPHS[topicId].repeat(3)}</Text>}
-      <BilingualText
-        en={prompt}
-        tl={promptTagalog}
-        size={battle ? 'sm' : 'lg'}
-        align={battle ? 'left' : 'center'}
-        color={battle ? '#fff' : undefined}
-      />
+      {!battle && (
+        <View style={styles.visualAidRow}>
+          {[0, 1, 2].map((i) => (
+            <Image key={i} source={TOPIC_GLYPHS[topicId]} style={styles.visualAid} />
+          ))}
+        </View>
+      )}
+      <View style={battle ? styles.battleContent : undefined}>
+        <BilingualText
+          en={prompt}
+          tl={promptTagalog}
+          size={battle ? 'sm' : 'lg'}
+          align="center"
+          color={battle ? '#fff' : undefined}
+        />
+      </View>
+      {battle && showHint && hintEn && hintTl ? (
+        <Animated.View
+          style={[
+            styles.hintWrap,
+            { opacity: hintOpacity, transform: [{ translateY: hintTranslateY }] },
+          ]}
+          testID="hint-copy"
+        >
+          <BilingualText en={hintEn} tl={hintTl} size="sm" color="#FFE3C2" align="center" />
+        </Animated.View>
+      ) : null}
     </View>
   );
 }
@@ -47,9 +105,20 @@ const styles = StyleSheet.create({
   cardBattle: {
     backgroundColor: 'transparent',
     borderWidth: 0,
-    padding: 0,
-    alignItems: 'flex-start',
+    padding: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 0,
   },
-  visualAid: { fontSize: 36, marginBottom: spacing.sm },
+  battleContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+  },
+  hintWrap: {
+    marginTop: spacing.sm,
+    width: '100%',
+  },
+  visualAidRow: { flexDirection: 'row', marginBottom: spacing.sm },
+  visualAid: { width: 36, height: 36, resizeMode: 'contain', marginHorizontal: 2 },
 });

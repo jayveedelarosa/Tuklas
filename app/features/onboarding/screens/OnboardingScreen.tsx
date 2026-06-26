@@ -6,7 +6,9 @@ import { RootStackParamList } from '../../../navigation/types';
 import { listPlayers } from '../repository/playerRepository';
 import { useSessionStore } from '../../../infrastructure/storage/sessionStore';
 import { colors, radii, spacing } from '../../../common/theme/colors';
+import { fonts } from '../../../common/theme/typography';
 import { appLogo, onboardingBackground } from '../../../common/theme/characterArt';
+import { uiIcons } from '../../../common/theme/uiIcons';
 import { BilingualText } from '../../../common/components/BilingualText';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Onboarding'>;
@@ -92,7 +94,10 @@ export function OnboardingScreen({ navigation }: Props) {
                     ]}
                   />
                 </View>
-                <Text style={styles.cardStreak}>🔥 {player.streakCount}-day streak</Text>
+                <View style={styles.streakRow}>
+                  <Image source={uiIcons.fire} style={styles.streakIcon} />
+                  <Text style={styles.cardStreak}>{player.streakCount}-day streak</Text>
+                </View>
               </Pressable>
             );
           })}
@@ -138,10 +143,12 @@ const styles = StyleSheet.create({
   cardPressed: { transform: [{ scale: 0.98 }] },
   cardHeader: { flexDirection: 'row', alignItems: 'center' },
   avatar: { width: 44, height: 44, borderRadius: 22, alignItems: 'center', justifyContent: 'center' },
-  avatarInitial: { color: colors.surface, fontSize: 20, fontWeight: '800' },
-  cardName: { flex: 1, marginLeft: spacing.sm, fontSize: 20, fontWeight: '800', color: colors.textDark },
-  cardProgress: { fontSize: 13, color: colors.textMuted, marginTop: spacing.sm, marginBottom: 6 },
+  avatarInitial: { color: colors.surface, fontSize: 20, fontFamily: fonts.display },
+  cardName: { flex: 1, marginLeft: spacing.sm, fontSize: 20, fontFamily: fonts.display, color: colors.textDark },
+  cardProgress: { fontSize: 13, fontFamily: fonts.display, color: colors.textMuted, marginTop: spacing.sm, marginBottom: 6 },
   progressTrack: { height: 8, borderRadius: radii.pill, backgroundColor: colors.border, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: colors.primary },
-  cardStreak: { fontSize: 13, color: colors.textDark, marginTop: spacing.sm, fontWeight: '600' },
+  streakRow: { flexDirection: 'row', alignItems: 'center', marginTop: spacing.sm },
+  streakIcon: { width: 14, height: 14, resizeMode: 'contain', marginRight: 4 },
+  cardStreak: { fontSize: 13, fontFamily: fonts.display, color: colors.textDark },
 });

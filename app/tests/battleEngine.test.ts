@@ -54,7 +54,9 @@ describe('Battle Engine (mocked signal inputs, PRD three-layer testing)', () => 
   it('repeated struggle (wrong answers) eventually crosses the hint-offer threshold', () => {
     let state = createBattleState('regrouping', regroupingQuestions, 0);
     let hintNoticeFired = false;
-    for (let i = 0; i < 6; i += 1) {
+    // 15 attempts (not 6): once a difficulty-down swap lands on an easier question,
+    // its lower beta narrows the beta-theta gap, so hint frequency climbs more slowly.
+    for (let i = 0; i < 15; i += 1) {
       const question = getCurrentQuestion(state);
       const result = submitAnswer(state, {
         selectedIndex: wrongIndexFor(question.correctIndex, question.choices.length),
@@ -81,6 +83,23 @@ describe('Battle Engine (mocked signal inputs, PRD three-layer testing)', () => 
     }
     expect(state.currentTier).toBeLessThan(0);
     expect(difficultyDownFired).toBe(true);
+  });
+
+  it('when a miss crosses a difficulty-down threshold, the next question actually changes', () => {
+    let state = createBattleState('regrouping', regroupingQuestions, 0);
+    let questionChangedOnDifficultyDown = false;
+    for (let i = 0; i < 6; i += 1) {
+      const questionBefore = getCurrentQuestion(state);
+      const result = submitAnswer(state, {
+        selectedIndex: wrongIndexFor(questionBefore.correctIndex, questionBefore.choices.length),
+        responseTimeMs: 7000,
+      });
+      if (result.notices.some((n) => n.id === 'difficulty-down') && result.state.currentQuestionId !== questionBefore.id) {
+        questionChangedOnDifficultyDown = true;
+      }
+      state = result.state;
+    }
+    expect(questionChangedOnDifficultyDown).toBe(true);
   });
 
   it('the question set clears only once every question has been answered correctly at least once', () => {

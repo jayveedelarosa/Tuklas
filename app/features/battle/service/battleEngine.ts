@@ -7,9 +7,10 @@ import { buildDifficultyNotice, buildHintNotice, TuklasNotice } from './noticeRu
 function pickQuestion(
   questions: Question[],
   correctlyAnsweredIds: string[],
-  targetTier: DifficultyTier
+  targetTier: DifficultyTier,
+  excludeId?: string
 ): Question | null {
-  const remaining = questions.filter((q) => !correctlyAnsweredIds.includes(q.id));
+  const remaining = questions.filter((q) => !correctlyAnsweredIds.includes(q.id) && q.id !== excludeId);
   if (remaining.length === 0) return null;
   return remaining.reduce((closest, q) =>
     Math.abs(q.difficultyTier - targetTier) < Math.abs(closest.difficultyTier - targetTier) ? q : closest
@@ -88,9 +89,12 @@ export function submitAnswer(state: BattleEngineState, input: SubmitAnswerInput)
   if (hintNotice) notices.push(hintNotice);
 
   const setCleared = !isDefeated && correctlyAnsweredIds.length === state.questions.length;
+  const tierDropped = nextTier < state.currentTier;
   const nextQuestion = wasCorrect
     ? pickQuestion(state.questions, correctlyAnsweredIds, nextTier)
-    : current; // PRD §Phase3: incorrect answers retry the same question, not a hard fail
+    : tierDropped
+      ? pickQuestion(state.questions, correctlyAnsweredIds, nextTier, current.id) ?? current
+      : current; // PRD §Phase3: an ordinary miss (no tier change) still retries the same question
 
   const nextState: BattleEngineState = {
     ...state,

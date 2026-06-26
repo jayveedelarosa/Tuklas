@@ -1,6 +1,7 @@
 import React from 'react';
-import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { colors, radii, spacing } from '../theme/colors';
+import { Image, ImageSourcePropType, Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
+import { colors, radii } from '../theme/colors';
+import { fonts, fontSizes, lineHeights, uiSpacing } from '../theme/typography';
 
 interface PrimaryButtonProps {
   label: string;
@@ -10,6 +11,8 @@ interface PrimaryButtonProps {
   disabled?: boolean;
   style?: ViewStyle;
   testID?: string;
+  compact?: boolean;
+  icon?: ImageSourcePropType;
 }
 
 /** Bottom-anchored primary action button, sized well past the 48x48dp minimum for Grade 1 hands. */
@@ -21,6 +24,8 @@ export function PrimaryButton({
   disabled,
   style,
   testID,
+  compact,
+  icon,
 }: PrimaryButtonProps) {
   return (
     <Pressable
@@ -29,6 +34,7 @@ export function PrimaryButton({
       disabled={disabled}
       style={({ pressed }) => [
         styles.base,
+        compact && styles.baseCompact,
         variant === 'primary' && styles.primary,
         variant === 'secondary' && styles.secondary,
         variant === 'ghost' && styles.ghost,
@@ -37,11 +43,24 @@ export function PrimaryButton({
         style,
       ]}
     >
-      <View style={styles.labelStack}>
-        <Text style={[styles.label, variant === 'ghost' && styles.ghostLabel]}>{label}</Text>
-        {labelTagalog ? (
-          <Text style={[styles.labelTagalog, variant === 'ghost' && styles.ghostLabel]}>{labelTagalog}</Text>
-        ) : null}
+      <View style={styles.row}>
+        {icon ? <Image source={icon} style={[styles.icon, compact && styles.iconCompact]} /> : null}
+        <View style={styles.labelStack}>
+          <Text style={[styles.label, compact && styles.labelCompact, variant === 'ghost' && styles.ghostLabel]}>
+            {label}
+          </Text>
+          {labelTagalog ? (
+            <Text
+              style={[
+                styles.labelTagalog,
+                compact && styles.labelTagalogCompact,
+                variant === 'ghost' && styles.ghostLabel,
+              ]}
+            >
+              {labelTagalog}
+            </Text>
+          ) : null}
+        </View>
       </View>
     </Pressable>
   );
@@ -54,16 +73,34 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: uiSpacing.buttonPaddingV,
+    paddingHorizontal: uiSpacing.buttonPaddingH,
   },
+  baseCompact: { minHeight: 32, minWidth: 0, paddingVertical: 4, paddingHorizontal: 12 },
   primary: { backgroundColor: colors.primary },
   secondary: { backgroundColor: colors.secondary },
   ghost: { backgroundColor: 'transparent', borderWidth: 2, borderColor: colors.border },
   disabled: { opacity: 0.5 },
   pressed: { transform: [{ scale: 0.97 }] },
+  row: { flexDirection: 'row', alignItems: 'center' },
+  icon: { width: 22, height: 22, resizeMode: 'contain', marginRight: 6 },
+  iconCompact: { width: 16, height: 16, marginRight: 4 },
   labelStack: { alignItems: 'center' },
-  label: { color: '#fff', fontSize: 18, fontWeight: '800' },
-  labelTagalog: { color: '#fff', fontSize: 13, fontWeight: '500', opacity: 0.9, marginTop: 1 },
+  label: {
+    color: '#fff',
+    fontFamily: fonts.display,
+    fontSize: fontSizes.md,
+    lineHeight: fontSizes.md * lineHeights.normal,
+  },
+  labelTagalog: {
+    color: '#fff',
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    lineHeight: fontSizes.sm * lineHeights.normal,
+    opacity: 0.9,
+    marginTop: 2,
+  },
   ghostLabel: { color: colors.textDark },
+  labelCompact: { fontSize: fontSizes.sm, lineHeight: fontSizes.sm * lineHeights.tight },
+  labelTagalogCompact: { fontSize: fontSizes.xs, lineHeight: fontSizes.xs * lineHeights.tight, marginTop: 0 },
 });

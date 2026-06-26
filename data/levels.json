@@ -108,48 +108,6 @@
       "characterName": "Locked",
       "playable": false,
       "questions": []
-    },
-    {
-      "id": "level10",
-      "name": "Coming soon",
-      "characterName": "Locked",
-      "playable": false,
-      "questions": []
-    },
-    {
-      "id": "level11",
-      "name": "Coming soon",
-      "characterName": "Locked",
-      "playable": false,
-      "questions": []
-    },
-    {
-      "id": "level12",
-      "name": "Coming soon",
-      "characterName": "Locked",
-      "playable": false,
-      "questions": []
-    },
-    {
-      "id": "level13",
-      "name": "Coming soon",
-      "characterName": "Locked",
-      "playable": false,
-      "questions": []
-    },
-    {
-      "id": "level14",
-      "name": "Coming soon",
-      "characterName": "Locked",
-      "playable": false,
-      "questions": []
-    },
-    {
-      "id": "level15",
-      "name": "Coming soon",
-      "characterName": "Locked",
-      "playable": false,
-      "questions": []
     }
   ]
 }
