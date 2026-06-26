@@ -28,3 +28,5 @@ export const tuklasMascot = {
 };
 
 export const appLogo = require('../../../assets/app logo/App Logo.png');
+
+export const onboardingBackground = require('../../../assets/onboarding/Background on boarding.png');
