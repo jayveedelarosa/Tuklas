@@ -3,7 +3,7 @@
 
 > "Ang pag-aaral ay pagsusunog ng kilay." — We disagree.
 
-A gamified, adaptive, fully-offline mobile app that wraps DepEd Grade 1 math practice (Quarter 1, Numbers and Number Sense) inside a Philippine-folklore monster-battle game, paired with an adaptive Pomodoro focus timer. Built in 24 hours for ACM TechSprint × Asteria 2026.
+A gamified, adaptive, fully offline mobile app that packages official DepEd lessons into a Philippine folklore monster-battler, paired with an adaptive Pomodoro focus timer. Built in 24 hours for ACM TechSprint × Asteria 2026
 
 ## Team — Haribirds
 
