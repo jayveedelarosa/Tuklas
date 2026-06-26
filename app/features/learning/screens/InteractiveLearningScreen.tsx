@@ -81,7 +81,7 @@ export function InteractiveLearningScreen({ navigation, route }: Props) {
         )}
       </ScrollView>
 
-      <ChatBubble currentBeat={beat <= 4 ? beat : null} />
+      <ChatBubble currentBeat={beat <= 4 ? beat : null} levelId={levelId} />
       {battleIntroActive && <BattleIntroTransition onComplete={finishBattleIntro} />}
     </SafeAreaView>
   );

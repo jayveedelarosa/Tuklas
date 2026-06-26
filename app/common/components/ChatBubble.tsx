@@ -6,12 +6,14 @@ import { ChatPanel } from './ChatPanel';
 
 interface ChatBubbleProps {
   currentBeat: number | null;
+  /** Level ID forwarded to ChatPanel so it can pull questions from the correct level bank. */
+  levelId?: string;
   /** Seam for the teammate wiring up real bot logic — forwarded from ChatPanel. */
   onSendMessage?: (text: string) => void;
 }
 
 /** Chat entry point icon shown through Phase 2 — opens the slide-in ChatPanel, no live API call. */
-export function ChatBubble({ currentBeat, onSendMessage }: ChatBubbleProps) {
+export function ChatBubble({ currentBeat, levelId, onSendMessage }: ChatBubbleProps) {
   const [panelOpen, setPanelOpen] = useState(false);
 
   return (
@@ -26,6 +28,7 @@ export function ChatBubble({ currentBeat, onSendMessage }: ChatBubbleProps) {
         visible={panelOpen}
         onClose={() => setPanelOpen(false)}
         currentBeat={currentBeat}
+        levelId={levelId}
         onSendMessage={onSendMessage}
       />
     </>

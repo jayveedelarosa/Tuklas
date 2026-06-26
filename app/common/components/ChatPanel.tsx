@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, radii, spacing } from '../theme/colors';
 import { BilingualText } from './BilingualText';
 import { PrimaryButton } from './PrimaryButton';
-import { getResponseForBeat } from '../../features/learning/repository/chatbotRepository';
+import { getResponseForBeat, getSampleProblemReply, getAnswerReply } from '../../features/learning/repository/chatbotRepository';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const PANEL_WIDTH = Math.round(SCREEN_WIDTH * 0.38);
@@ -12,22 +12,29 @@ const PANEL_WIDTH = Math.round(SCREEN_WIDTH * 0.38);
 interface PanelMessage {
   id: number;
   text: string;
+  /** 'user' renders right-aligned; 'bot' renders left-aligned */
+  sender: 'user' | 'bot';
 }
 
 interface ChatPanelProps {
   visible: boolean;
   onClose: () => void;
   currentBeat: number | null;
+  /** Level ID forwarded from the screen so the chatbot can pull questions from the right level bank. */
+  levelId?: string;
   /** Seam for the teammate wiring up real bot logic — called after a message is appended locally. No reply is generated here. */
   onSendMessage?: (text: string) => void;
 }
 
-export function ChatPanel({ visible, onClose, currentBeat, onSendMessage }: ChatPanelProps) {
+export function ChatPanel({ visible, onClose, currentBeat, levelId, onSendMessage }: ChatPanelProps) {
   const translateX = useRef(new Animated.Value(PANEL_WIDTH)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
   const [draft, setDraft] = useState('');
   const [messages, setMessages] = useState<PanelMessage[]>([]);
   const nextId = useRef(0);
+  /** Tracks which turn we are in the 2-turn sequence. Odd turns (1, 3, …) = ask a problem; even turns (2, 4, …) = reveal the answer. */
+  const turnRef = useRef(0);
+  const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     Animated.parallel([
@@ -41,10 +48,27 @@ export function ChatPanel({ visible, onClose, currentBeat, onSendMessage }: Chat
   const handleSend = () => {
     const text = draft.trim();
     if (!text) return;
-    const id = nextId.current++;
-    setMessages((prev) => [...prev, { id, text }]);
+
+    // Append the user's message
+    const userId = nextId.current++;
+    setMessages((prev) => [...prev, { id: userId, text, sender: 'user' }]);
     setDraft('');
     onSendMessage?.(text);
+
+    // Determine the bot's reply based on the current turn
+    turnRef.current += 1;
+    const isOddTurn = turnRef.current % 2 !== 0;
+    const botReply = isOddTurn
+      ? getSampleProblemReply(levelId ?? 'level3')
+      : getAnswerReply();
+
+    // Combine Filipino and English into one bubble text
+    const botText = `${botReply.displayText}\n${botReply.displayTextEn}`;
+    const botId = nextId.current++;
+    setMessages((prev) => [...prev, { id: botId, text: botText, sender: 'bot' }]);
+
+    // Scroll to the bottom after state updates
+    setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 100);
   };
 
   return (
@@ -63,6 +87,7 @@ export function ChatPanel({ visible, onClose, currentBeat, onSendMessage }: Chat
           </View>
 
           <ScrollView
+            ref={scrollRef}
             style={styles.messageList}
             contentContainerStyle={styles.messageListContent}
             testID="chatbot-message-list"
@@ -72,8 +97,12 @@ export function ChatPanel({ visible, onClose, currentBeat, onSendMessage }: Chat
             </View>
 
             {messages.map((message, index) => (
-              <View key={message.id} style={styles.messageBubble} testID={`chatbot-message-${index}`}>
-                <Text style={styles.messageText}>{message.text}</Text>
+              <View
+                key={message.id}
+                style={[styles.messageBubble, message.sender === 'bot' ? styles.botBubble : styles.userBubble]}
+                testID={`chatbot-message-${index}`}
+              >
+                <Text style={[styles.messageText, message.sender === 'bot' && styles.botMessageText]}>{message.text}</Text>
               </View>
             ))}
           </ScrollView>
@@ -146,14 +175,23 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   messageBubble: {
-    alignSelf: 'flex-end',
     maxWidth: '85%',
-    backgroundColor: colors.primary,
     borderRadius: radii.md,
     padding: spacing.sm,
     marginBottom: spacing.sm,
   },
+  userBubble: {
+    alignSelf: 'flex-end',
+    backgroundColor: colors.primary,
+  },
+  botBubble: {
+    alignSelf: 'flex-start',
+    backgroundColor: colors.background,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
   messageText: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  botMessageText: { color: colors.textDark },
   footer: {
     flexDirection: 'row',
     alignItems: 'flex-end',
