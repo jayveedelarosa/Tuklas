@@ -9,20 +9,21 @@ import { BattleScreen } from '../features/battle/screens/BattleScreen';
 import { PomodoroBreakScreen } from '../features/pomodoro/screens/PomodoroBreakScreen';
 import { SessionSummaryScreen } from '../features/battle/screens/SessionSummaryScreen';
 import { RosterScreen } from '../features/roster/screens/RosterScreen';
+import { defaultStackOptions, forwardScreenOptions } from './transitionConfig';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export function RootNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Onboarding" screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
-        <Stack.Screen name="Map" component={MapScreen} />
-        <Stack.Screen name="InteractiveLearning" component={InteractiveLearningScreen} />
-        <Stack.Screen name="Battle" component={BattleScreen} />
-        <Stack.Screen name="PomodoroBreak" component={PomodoroBreakScreen} />
-        <Stack.Screen name="SessionSummary" component={SessionSummaryScreen} />
-        <Stack.Screen name="Roster" component={RosterScreen} />
+      <Stack.Navigator initialRouteName="Onboarding" screenOptions={defaultStackOptions}>
+        <Stack.Screen name="Onboarding" component={OnboardingScreen} options={forwardScreenOptions} />
+        <Stack.Screen name="Map" component={MapScreen} options={forwardScreenOptions} />
+        <Stack.Screen name="InteractiveLearning" component={InteractiveLearningScreen} options={forwardScreenOptions} />
+        <Stack.Screen name="Battle" component={BattleScreen} options={forwardScreenOptions} />
+        <Stack.Screen name="PomodoroBreak" component={PomodoroBreakScreen} options={forwardScreenOptions} />
+        <Stack.Screen name="SessionSummary" component={SessionSummaryScreen} options={forwardScreenOptions} />
+        <Stack.Screen name="Roster" component={RosterScreen} options={forwardScreenOptions} />
       </Stack.Navigator>
     </NavigationContainer>
   );

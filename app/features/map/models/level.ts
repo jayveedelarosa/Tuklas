@@ -17,5 +17,5 @@ export interface Level {
   questions: RawLevelQuestion[];
 }
 
-export const TOTAL_MAP_NODES = 15;
+export const TOTAL_MAP_NODES = 9;
 export const PLAYABLE_LEVEL_ID = 'level3';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View, ViewStyle } from 'react-native';
-import { colors, radii, spacing } from '../theme/colors';
+import { colors, radii } from '../theme/colors';
+import { fonts, fontSizes, lineHeights, uiSpacing } from '../theme/typography';
 
 interface PrimaryButtonProps {
   label: string;
@@ -54,8 +55,8 @@ const styles = StyleSheet.create({
     borderRadius: radii.lg,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: spacing.md,
-    paddingHorizontal: spacing.lg,
+    paddingVertical: uiSpacing.buttonPaddingV,
+    paddingHorizontal: uiSpacing.buttonPaddingH,
   },
   primary: { backgroundColor: colors.primary },
   secondary: { backgroundColor: colors.secondary },
@@ -63,7 +64,19 @@ const styles = StyleSheet.create({
   disabled: { opacity: 0.5 },
   pressed: { transform: [{ scale: 0.97 }] },
   labelStack: { alignItems: 'center' },
-  label: { color: '#fff', fontSize: 18, fontWeight: '800' },
-  labelTagalog: { color: '#fff', fontSize: 13, fontWeight: '500', opacity: 0.9, marginTop: 1 },
+  label: {
+    color: '#fff',
+    fontFamily: fonts.display,
+    fontSize: fontSizes.md,
+    lineHeight: fontSizes.md * lineHeights.normal,
+  },
+  labelTagalog: {
+    color: '#fff',
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    lineHeight: fontSizes.sm * lineHeights.normal,
+    opacity: 0.9,
+    marginTop: 2,
+  },
   ghostLabel: { color: colors.textDark },
 });
