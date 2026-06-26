@@ -278,13 +278,15 @@ export function BattleScreen({ navigation, route }: Props) {
                     />
                   </View>
                 ) : (
-                  <PrimaryButton
-                    label="Next"
-                    labelTagalog="Susunod"
-                    onPress={handleContinue}
-                    style={styles.nextButton}
-                    testID="continue-button"
-                  />
+                  <View style={styles.feedbackMenu}>
+                    <PrimaryButton
+                      label="Next"
+                      labelTagalog="Susunod"
+                      onPress={handleContinue}
+                      style={styles.nextButton}
+                      testID="continue-button"
+                    />
+                  </View>
                 )}
               </View>
             </View>
@@ -347,14 +349,14 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     borderWidth: 3,
     borderColor: colors.battleMenuBorder,
-    padding: spacing.sm,
-    justifyContent: 'flex-end',
-    minHeight: 160,
+    padding: spacing.xs,
+    overflow: 'hidden',
   },
-  answeringStack: { alignSelf: 'stretch' },
-  choiceGrid: { marginBottom: 10 },
-  choiceRow: { flexDirection: 'row', marginBottom: 10 },
-  choiceCell: { flex: 1, marginHorizontal: 4 },
-  submitButton: { minHeight: 44, marginTop: 12, alignSelf: 'stretch' },
-  nextButton: { minHeight: 44, alignSelf: 'center', width: '55%' },
+  answeringStack: { flex: 1, alignSelf: 'stretch', minHeight: 0 },
+  choiceGrid: { flex: 1, minHeight: 0 },
+  choiceRow: { flex: 1, flexDirection: 'row', minHeight: 0 },
+  choiceCell: { flex: 1, minWidth: 0, marginHorizontal: 3, marginVertical: 2 },
+  submitButton: { minHeight: 40, marginTop: 2, alignSelf: 'stretch' },
+  feedbackMenu: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  nextButton: { minHeight: 44, width: '55%' },
 });

@@ -22,6 +22,18 @@ const BUBBLE_VISIBLE_MS = 4500;
 const BUBBLE_FADE_MS = 300;
 const BUBBLE_POP_MS = 200;
 
+/** Focus-time streak panel — sized to match the 6×5 reference layout. */
+const STREAK_CELL_SIZE = 30;
+const STREAK_COLUMNS = 6;
+const STREAK_DAYS = 30;
+/** +11% from prior 108px; moderate bump, not panel-hero size. */
+const TUKLAS_SIZE = 120;
+/** Nudge timer column toward screen center (right of default left edge). */
+const LEFT_COLUMN_SHIFT_PX = 48;
+/** Tuklas anchor inset from screen edges (inside SafeAreaView padding). */
+const TUKLAS_INSET_RIGHT = 12;
+const TUKLAS_INSET_BOTTOM = 16;
+
 function formatClock(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60)
     .toString()
@@ -136,78 +148,115 @@ export function PomodoroBreakScreen({ navigation, route }: Props) {
     <SafeAreaView style={styles.screen}>
       <TuklasNoticedBanner notice={notice} onDismiss={() => setNotice(null)} />
 
-      <View style={styles.focusBlock}>
-        <BilingualText
-          en={phase === 'break' ? 'Break time!' : 'Focus time'}
-          tl={phase === 'break' ? 'Oras ng pahinga!' : 'Oras ng pagtutok'}
-          size="lg"
-          align="center"
-        />
+      <View style={styles.mainRow}>
+        <View style={styles.leftColumn}>
+          <BilingualText
+            en={phase === 'break' ? 'Break time!' : 'Focus time'}
+            tl={phase === 'break' ? 'Oras ng pahinga!' : 'Oras ng pagtutok'}
+            size="lg"
+            align="center"
+          />
 
-        <View style={styles.timerCircle} testID="pomodoro-timer">
-          <Text style={styles.timerText}>{formatClock(remainingSeconds)}</Text>
-          <Text style={styles.timerSub}>
-            {phase === 'break' ? `${breakLength} min break` : `${sessionLength} min session`}
-          </Text>
+          <View style={styles.timerCircle} testID="pomodoro-timer">
+            <Text style={styles.timerText}>{formatClock(remainingSeconds)}</Text>
+            <Text style={styles.timerSub}>
+              {phase === 'break' ? `${breakLength} min break` : `${sessionLength} min session`}
+            </Text>
+          </View>
+
+          {phase === 'idle' && (
+            <PrimaryButton
+              label="Start session"
+              labelTagalog="Simulan"
+              onPress={startSession}
+              style={styles.cta}
+              testID="start-session"
+            />
+          )}
+
+          {phase === 'session' && (
+            <View style={styles.row}>
+              <PrimaryButton
+                label="Complete"
+                labelTagalog="Tapos na"
+                onPress={() => resolveSession(true)}
+                style={styles.rowButton}
+                testID="complete-session"
+              />
+              <PrimaryButton
+                label="Abandon"
+                labelTagalog="Itigil"
+                variant="ghost"
+                onPress={() => resolveSession(false)}
+                style={styles.rowButton}
+                testID="abandon-session"
+              />
+            </View>
+          )}
+
+          {phase === 'break' && (
+            <PrimaryButton
+              label="Continue"
+              labelTagalog="Magpatuloy"
+              onPress={finishBreak}
+              style={styles.cta}
+              testID="finish-break"
+            />
+          )}
         </View>
 
-        {phase === 'idle' && (
-          <PrimaryButton label="Start session" labelTagalog="Simulan" onPress={startSession} style={styles.cta} testID="start-session" />
-        )}
+        <View style={styles.rightPanel}>
+          <View style={styles.streakSection}>
+            <Text style={styles.streakLabel}>🔥 {streakCount}-day streak</Text>
 
-        {phase === 'session' && (
-          <View style={styles.row}>
-            <PrimaryButton
-              label="Complete"
-              labelTagalog="Tapos na"
-              onPress={() => resolveSession(true)}
-              style={styles.rowButton}
-              testID="complete-session"
-            />
-            <PrimaryButton
-              label="Abandon"
-              labelTagalog="Itigil"
-              variant="ghost"
-              onPress={() => resolveSession(false)}
-              style={styles.rowButton}
-              testID="abandon-session"
+            <StreakHeatmap
+              history={history}
+              days={STREAK_DAYS}
+              columns={STREAK_COLUMNS}
+              legendPlacement="right"
+              cellSize={STREAK_CELL_SIZE}
             />
           </View>
-        )}
-
-        {phase === 'break' && (
-          <PrimaryButton label="Continue" labelTagalog="Magpatuloy" onPress={finishBreak} style={styles.cta} testID="finish-break" />
-        )}
+        </View>
       </View>
 
-      <View style={styles.streakBlock}>
-        <Text style={styles.streakLabel}>🔥 {streakCount}-day streak</Text>
-        <StreakHeatmap history={history} />
-      </View>
-
-      <View style={styles.tuklasCorner} pointerEvents="box-none">
-        {bubbleVisible && (
-          <Animated.View
-            style={[
-              styles.speechBubble,
-              { opacity: bubbleOpacity, transform: [{ scale: bubbleScale }] },
-            ]}
-            testID="focus-tuklas-bubble"
+      <View style={styles.tuklasZone} pointerEvents="box-none">
+        <View style={styles.tuklasRow}>
+          {bubbleVisible ? (
+            <Animated.View
+              style={[
+                styles.speechBubble,
+                { opacity: bubbleOpacity, transform: [{ scale: bubbleScale }] },
+              ]}
+              testID="focus-tuklas-bubble"
+            >
+              <BilingualText en={quote.en} tl={quote.tl} size="sm" align="center" />
+            </Animated.View>
+          ) : null}
+          <Pressable
+            onPress={handleTuklasPress}
+            testID="focus-tuklas-mascot"
+            hitSlop={12}
+            style={styles.tuklasPressable}
           >
-            <BilingualText en={quote.en} tl={quote.tl} size="sm" align="center" />
-          </Animated.View>
-        )}
-        <Pressable onPress={handleTuklasPress} testID="focus-tuklas-mascot" hitSlop={12}>
-          <Image source={tuklasMascot.calm} style={styles.tuklasImage} />
-        </Pressable>
+            <Image source={tuklasMascot.calm} style={styles.tuklasImage} />
+          </Pressable>
+        </View>
       </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: colors.background, flexDirection: 'row', padding: spacing.lg },
-  focusBlock: { flex: 1.1, alignItems: 'center', justifyContent: 'center', paddingRight: spacing.md },
+  screen: { flex: 1, backgroundColor: colors.background, padding: spacing.lg },
+  mainRow: { flex: 1, flexDirection: 'row' },
+  leftColumn: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingLeft: LEFT_COLUMN_SHIFT_PX,
+    paddingRight: spacing.md,
+  },
   timerCircle: {
     width: 180,
     height: 180,
@@ -217,7 +266,8 @@ const styles = StyleSheet.create({
     borderColor: colors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical: spacing.lg,
+    marginTop: spacing.md,
+    marginBottom: spacing.lg,
   },
   timerText: {
     fontFamily: fonts.display,
@@ -231,32 +281,52 @@ const styles = StyleSheet.create({
     color: colors.textMuted,
     marginTop: spacing.xs,
   },
-  cta: { minWidth: 200 },
-  row: { flexDirection: 'row' },
-  rowButton: { marginHorizontal: spacing.sm, minWidth: 130 },
-  streakBlock: { flex: 1, alignItems: 'center', justifyContent: 'center', paddingHorizontal: spacing.sm },
+  cta: { minWidth: 200, alignSelf: 'center' },
+  row: { flexDirection: 'row', alignSelf: 'center' },
+  rowButton: { marginRight: spacing.sm, minWidth: 130 },
+  rightPanel: {
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingTop: spacing.sm,
+  },
+  streakSection: {
+    alignItems: 'center',
+    alignSelf: 'center',
+  },
   streakLabel: {
     fontFamily: fonts.display,
-    fontSize: fontSizes.xl,
+    fontSize: fontSizes.xxl,
     color: colors.textDark,
     marginBottom: spacing.md,
-    lineHeight: fontSizes.xl * lineHeights.normal,
+    lineHeight: fontSizes.xxl * lineHeights.normal,
+    textAlign: 'center',
+    alignSelf: 'stretch',
   },
-  tuklasCorner: {
+  tuklasZone: {
     position: 'absolute',
-    bottom: spacing.lg,
-    right: spacing.lg,
+    right: TUKLAS_INSET_RIGHT,
+    bottom: TUKLAS_INSET_BOTTOM,
+    maxWidth: '52%',
+    zIndex: 10,
+  },
+  tuklasRow: {
+    flexDirection: 'row',
     alignItems: 'flex-end',
-    maxWidth: 240,
+    justifyContent: 'flex-end',
   },
   speechBubble: {
+    flexShrink: 1,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     borderWidth: 2,
     borderColor: colors.primary,
-    padding: spacing.sm,
-    marginBottom: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    marginRight: spacing.xs,
     maxWidth: 220,
+    zIndex: 1,
   },
-  tuklasImage: { width: 120, height: 120, resizeMode: 'contain' },
+  tuklasPressable: { zIndex: 2, flexShrink: 0 },
+  tuklasImage: { width: TUKLAS_SIZE, height: TUKLAS_SIZE, resizeMode: 'contain' },
 });

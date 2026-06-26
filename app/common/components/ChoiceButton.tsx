@@ -32,7 +32,11 @@ export function ChoiceButton({ label, state, onPress, disabled, testID, style, c
       ]}
     >
       <Text
-        style={[styles.label, compact && styles.labelCompact, (state === 'correct' || state === 'incorrect') && styles.outcomeLabel]}
+        style={[
+          styles.label,
+          compact && styles.labelCompact,
+          (state === 'correct' || state === 'incorrect') && styles.outcomeLabel,
+        ]}
         numberOfLines={compact ? 3 : undefined}
       >
         {label}
@@ -55,10 +59,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   baseCompact: {
-    minHeight: 48,
-    paddingVertical: 12,
-    paddingHorizontal: 14,
+    flex: 1,
+    alignSelf: 'stretch',
+    minHeight: 40,
+    minWidth: 0,
+    paddingVertical: 6,
+    paddingHorizontal: 6,
     marginBottom: 0,
+    overflow: 'hidden',
   },
   selected: { borderColor: colors.secondary, backgroundColor: '#EAF6FC' },
   correct: { borderColor: colors.success, backgroundColor: '#E9F7EA' },
@@ -71,6 +79,10 @@ const styles = StyleSheet.create({
     color: colors.textDark,
     textAlign: 'center',
   },
-  labelCompact: { fontSize: fontSizes.xs, lineHeight: fontSizes.xs * lineHeights.relaxed },
+  labelCompact: {
+    fontSize: fontSizes.xs,
+    lineHeight: fontSizes.xs * lineHeights.relaxed,
+    flexShrink: 1,
+  },
   outcomeLabel: { fontFamily: fonts.display },
 });

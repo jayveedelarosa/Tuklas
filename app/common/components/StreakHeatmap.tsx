@@ -1,12 +1,15 @@
 import React, { useMemo } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
-import { colors, radii, spacing } from '../theme/colors';
+import { StyleSheet, Text, View } from 'react-native';
+import { colors, spacing } from '../theme/colors';
 import { fonts, fontSizes, lineHeights } from '../theme/typography';
 import { PomodoroSessionRecord } from '../../features/pomodoro/models/pomodoro';
 
 interface StreakHeatmapProps {
   history: PomodoroSessionRecord[];
   days?: number;
+  columns?: number;
+  legendPlacement?: 'below' | 'right';
+  cellSize?: number;
 }
 
 type DayStatus = 'completed' | 'abandoned' | 'none';
@@ -15,7 +18,13 @@ function toDateKey(date: Date): string {
   return date.toISOString().slice(0, 10);
 }
 
-export function StreakHeatmap({ history, days = 28 }: StreakHeatmapProps) {
+export function StreakHeatmap({
+  history,
+  days = 28,
+  columns = 7,
+  legendPlacement = 'below',
+  cellSize = 28,
+}: StreakHeatmapProps) {
   const cells = useMemo(() => {
     const byDate = new Map<string, DayStatus>();
     for (const record of history) {
@@ -32,18 +41,52 @@ export function StreakHeatmap({ history, days = 28 }: StreakHeatmapProps) {
     return result;
   }, [history, days]);
 
+  const cellMargin = Math.round(cellSize * 0.11);
+  const gridWidth = columns * cellSize + cellMargin * 2 * columns;
+  const legendFontSize = Math.round(cellSize * 0.48);
+  const legendDotSize = Math.round(cellSize * 0.48);
+
+  const legend = (
+    <View style={legendPlacement === 'right' ? styles.legendColumn : styles.legendRow}>
+      <LegendDot color={colors.success} label="Completed" dotSize={legendDotSize} fontSize={legendFontSize} />
+      <LegendDot color={colors.danger} label="Abandoned" dotSize={legendDotSize} fontSize={legendFontSize} />
+      <LegendDot color={colors.border} label="No session" dotSize={legendDotSize} fontSize={legendFontSize} />
+    </View>
+  );
+
+  const grid = (
+    <View style={[styles.grid, { width: gridWidth }]}>
+      {cells.map((cell) => (
+        <View
+          key={cell.key}
+          style={[
+            styles.cell,
+            {
+              width: cellSize,
+              height: cellSize,
+              borderRadius: Math.round(cellSize * 0.2),
+              margin: cellMargin,
+            },
+            cellStyleFor(cell.status),
+          ]}
+        />
+      ))}
+    </View>
+  );
+
   return (
     <View testID="streak-heatmap">
-      <View style={styles.grid}>
-        {cells.map((cell) => (
-          <View key={cell.key} style={[styles.cell, cellStyleFor(cell.status)]} />
-        ))}
-      </View>
-      <View style={styles.legendRow}>
-        <LegendDot color={colors.success} label="Completed" />
-        <LegendDot color={colors.danger} label="Abandoned" />
-        <LegendDot color={colors.border} label="No session" />
-      </View>
+      {legendPlacement === 'right' ? (
+        <View style={styles.gridWithLegend}>
+          {grid}
+          {legend}
+        </View>
+      ) : (
+        <>
+          {grid}
+          {legend}
+        </>
+      )}
     </View>
   );
 }
@@ -54,27 +97,35 @@ function cellStyleFor(status: DayStatus) {
   return { backgroundColor: colors.border };
 }
 
-function LegendDot({ color, label }: { color: string; label: string }) {
+function LegendDot({
+  color,
+  label,
+  dotSize,
+  fontSize,
+}: {
+  color: string;
+  label: string;
+  dotSize: number;
+  fontSize: number;
+}) {
   return (
     <View style={styles.legendItem}>
-      <View style={[styles.legendDot, { backgroundColor: color }]} />
-      <Text style={styles.legendLabel}>{label}</Text>
+      <View style={[styles.legendDot, { width: dotSize, height: dotSize, borderRadius: dotSize / 2, backgroundColor: color }]} />
+      <Text style={[styles.legendLabel, { fontSize, lineHeight: fontSize * lineHeights.normal }]}>{label}</Text>
     </View>
   );
 }
 
-const CELL_SIZE = 28;
-
 const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', width: CELL_SIZE * 7 + 6 * 5 },
-  cell: { width: CELL_SIZE, height: CELL_SIZE, borderRadius: 6, margin: 3 },
+  gridWithLegend: { flexDirection: 'row', alignItems: 'center' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap' },
+  cell: {},
   legendRow: { flexDirection: 'row', marginTop: spacing.md, flexWrap: 'wrap', justifyContent: 'center' },
-  legendItem: { flexDirection: 'row', alignItems: 'center', marginRight: spacing.md, marginTop: spacing.xs },
-  legendDot: { width: 12, height: 12, borderRadius: 6, marginRight: 6 },
+  legendColumn: { marginLeft: spacing.md, justifyContent: 'center', paddingVertical: spacing.xs },
+  legendItem: { flexDirection: 'row', alignItems: 'center', marginBottom: spacing.xs },
+  legendDot: { marginRight: 6 },
   legendLabel: {
     fontFamily: fonts.body,
-    fontSize: fontSizes.sm,
     color: colors.textMuted,
-    lineHeight: fontSizes.sm * lineHeights.normal,
   },
 });
