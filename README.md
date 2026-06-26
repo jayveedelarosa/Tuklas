@@ -1,6 +1,9 @@
 # Tuklas
+### Uncover the Joy of Learning
 
-A gamified, fully-offline mobile app that wraps DepEd Grade 1 math practice (Quarter 1, Numbers and Number Sense) inside a Philippine-folklore monster-battle game, paired with an adaptive Pomodoro focus timer.
+> "Ang pag-aaral ay pagsusunog ng kilay." — We disagree.
+
+A gamified, adaptive, fully-offline mobile app that wraps DepEd Grade 1 math practice (Quarter 1, Numbers and Number Sense) inside a Philippine-folklore monster-battle game, paired with an adaptive Pomodoro focus timer. Built in 24 hours for ACM TechSprint × Asteria 2026.
 
 ## Team — Haribirds
 
@@ -9,7 +12,44 @@ A gamified, fully-offline mobile app that wraps DepEd Grade 1 math practice (Qua
 - Roel Aquino
 - Jayvee Dela Rosa
 
-## What's built
+---
+
+## The Problem
+
+Filipino kids practice math the same way whether they're struggling or coasting. Nothing notices. Nothing adapts.
+
+Filipino resilience is real — but it shouldn't be the reason non-adaptive systems get a pass.
+
+---
+
+## What Tuklas Does
+
+Tuklas wraps DepEd-aligned math inside a Philippine folklore adventure. Kids battle monsters by answering questions. The app watches how they play — and adjusts in real time.
+
+**Four signals in. Three adaptations out. One message the child actually sees.**
+
+| Signals In | Outputs |
+|---|---|
+| Quiz accuracy | Question difficulty |
+| Response time | Hint frequency |
+| Pomodoro completion | Session length |
+| Streak history | |
+
+The on-screen message — *"Tuklas noticed you're struggling — here's an easier question"* — is the feature. Not the adjusting. The showing.
+
+### Core features (MVP pitch)
+
+- **Folklore map & battles** — Defeat monsters via DepEd Grade 3 math questions across a 15-node map
+- **Adaptive Learning Engine** — Elo-based difficulty, derived hint frequency, bounded Pomodoro adjustment
+- **Pomodoro focus mode** — 25/5 baseline, adaptively adjusted per session history
+- **Behavioral adherence tracking** — Daily streak counter + calendar heatmap
+- **Bilingual dialogue** — English and Tagalog throughout
+- **Demo onboarding** — 3 pre-seeded player profiles so judges see mid-progress states immediately
+- **Fully offline** — No internet required; no backend; no auth
+
+---
+
+## What's built (vertical slice)
 
 A complete vertical slice, playable end to end:
 
@@ -25,13 +65,58 @@ A complete vertical slice, playable end to end:
 
 All three DepEd Grade 1 modules are bundled as separate, independently-loadable question banks (`app/features/topics/data/*.json`) seeded from the modules' own word problems — Mary's palengke fruit basket and Karl & Andria's mango regrouping (Module 3), Lina & Karla's mango one-more/one-less story (Module 2), and Lorna's bookstore numeral/word exercise (Module 1). The playable Level 3 battle draws from the regrouping bank; number-sense and one-more-one-less ship bundled (and are covered by the data-layer tests) but aren't yet wired into a second playable level, since only Level 3 is in scope for this build (see Known limitations).
 
+---
+
+## The Adaptive Engine
+
+### Difficulty — Elo meets flow theory
+
+Adapted from chess Elo ratings for educational use (Pelánek, 2016):
+
+```
+P(correct) = 1 / (1 + e^(-(θ_student - β_question)))
+
+θ_student += K × (actual - P(correct))
+β_question += K × (P(correct) - actual)
+```
+
+Next question difficulty is chosen by matching β_question closest to current θ_student — keeping the student in Csikszentmihalyi's flow zone (challenge = skill). In code this is `elo.ts`'s `ELO_K_FACTOR = 0.45`, with `pickNextDifficultyTier` snapping to the closest of three fixed tiers (-1, 0, 1); slow-but-correct answers (over `SLOW_RESPONSE_THRESHOLD_MS = 6000`) get a halved K.
+
+### Hint frequency — derived from the same gap
+
+```
+hintFrequency = clamp((β - θ) × sensitivity, 0, 1)
+```
+
+No separate tuning needed. Larger gap → more hints. Student ahead of question → no hints, difficulty bumps instead.
+
+### Session length — adaptive Pomodoro
+
+Bounded adjustment around the Cirillo (2018) baseline:
+
+```
+sessionLength = clamp(25 + adjustmentStep × (completionRate - 0.5) × 2, 15, 35)
+breakLength   = clamp(5  + adjustmentStep × (1 - completionRate) × 2,  5, 10)
+```
+
+Rolling average over the last 3 sessions (`pomodoroEngine.ts`). Cold start defaults to 25/5 until history exists.
+
+> Rule-based, not ML. Research-grounded formulas. Honest v1 framing. Fuller adaptive roadmap ahead.
+
+---
+
 ## Tech stack
 
-- React Native + Expo (TypeScript), Expo Go-compatible
-- React Navigation (native-stack)
-- Zustand for in-memory session state
-- No backend, no auth, no persistence — fully local, offline by design
-- Jest + jest-expo + React Native Testing Library
+| Layer | Choice | Reason |
+|---|---|---|
+| Framework | React Native + Expo (TypeScript), Expo Go-compatible | Fastest setup-to-running-app for a 4-person 24hr team |
+| Navigation | React Navigation (native-stack) | |
+| State | Zustand, in-memory only | No backend — client state is the database |
+| Data | Bundled JSON (`data/*.json`) | Zero network dependency |
+| Backend | None — chatbot is a hardcoded lookup table | Roadmap: swap in a live Gemini API call for the Phase 2 chatbot |
+| Auth | None | Student-only, session-only |
+| Testing | Jest + jest-expo + React Native Testing Library | |
+| Deployment | Expo Go + EAS Build | Expo Go sufficient for judging |
 
 ## Setup
 
@@ -75,6 +160,24 @@ Covers all three required layers:
 - **Only Level 3 is playable.** Levels 1–2 are pre-completed map stubs; levels 4–15 are locked/coming-soon placeholders. This is the PRD's locked scope decision for the hackathon build, not a bug.
 - **No Grades 4–6 content.** Scope is locked to Grade 1, Quarter 1, Numbers and Number Sense (visualizing 0–100, one-more/one-less, regrouping).
 - **No teacher/parent view.** Student-only by design; out of scope for this MVP.
-- **Chatbot is hardcoded.** The Phase 2 chat bubble is a pure lookup table, not a live model call.
+- **Chatbot is hardcoded.** The Phase 2 chat bubble is a pure lookup table, not a live model call — a Gemini API integration is on the roadmap, not in this build.
 - **Placeholder folklore art.** The bundled character art (`Buboy`/`Sigbin`) predates the final Tikbalang/Aswang/Kapre naming — swap in final art via `app/common/theme/characterArt.ts` once ready.
 - **Number-sense and one-more-one-less question banks ship bundled but aren't yet wired to a second playable level** — only Level 3's regrouping battle is playable in this build.
+
+---
+
+## References
+
+The Adaptive Engine is grounded in published educational measurement and productivity research:
+
+- Pelánek, R. (2016). *Applications of the Elo rating system in adaptive educational systems.* Computers & Education.
+- Selent, D., Patikorn, T., & Heffernan, N. (2019). *A Multivariate Elo-based Learner Model for Adaptive Educational Systems.* arXiv:1910.12581
+- Csikszentmihalyi, M. (1990). *Flow: The Psychology of Optimal Experience.* Harper & Row.
+- Csikszentmihalyi, M., & Schneider, B. (2000). *Becoming Adult.* Basic Books.
+- Cirillo, F. (2018). *The Pomodoro Technique.* Currency / Crown.
+- PMC12292963 (2024/2025). *Investigating the Effectiveness of Self-Regulated, Pomodoro, and Flowtime Break-Taking Techniques Among Students.*
+- van der Linden, W. J. (2006/2009). Lognormal response-time IRT models. arXiv:1005.0714 *(context only — not directly implemented in MVP)*
+
+---
+
+*"Learning shouldn't burn. Tuklas fixes that."*
