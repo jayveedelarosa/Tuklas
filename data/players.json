@@ -3,7 +3,7 @@
     {
       "id": "player1",
       "name": "Player 1",
-      "completedLevelIds": ["level1", "level2", "level3"],
+      "completedLevelIds": ["level1", "level2"],
       "unlockedCharacterIds": ["tikbalang", "aswang", "sigbin"],
       "streakCount": 12,
       "thetaStudent": 0.7,
@@ -61,7 +61,7 @@
     {
       "id": "player2",
       "name": "Player 2",
-      "completedLevelIds": ["level1", "level2", "level3"],
+      "completedLevelIds": ["level1", "level2"],
       "unlockedCharacterIds": ["tikbalang", "aswang", "sigbin"],
       "streakCount": 7,
       "thetaStudent": 0.1,

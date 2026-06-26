@@ -61,9 +61,9 @@ const styles = StyleSheet.create({
   baseCompact: {
     flex: 1,
     alignSelf: 'stretch',
-    minHeight: 40,
+    minHeight: 34,
     minWidth: 0,
-    paddingVertical: 6,
+    paddingVertical: 4,
     paddingHorizontal: 6,
     marginBottom: 0,
     overflow: 'hidden',

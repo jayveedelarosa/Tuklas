@@ -13,6 +13,7 @@ import { TuklasNoticedBanner } from '../../../common/components/TuklasNoticedBan
 import { StreakHeatmap } from '../../../common/components/StreakHeatmap';
 import { TuklasNotice } from '../../battle/service/noticeRules';
 import { tuklasMascot } from '../../../common/theme/characterArt';
+import { uiIcons } from '../../../common/theme/uiIcons';
 import { nextFocusQuote, FocusQuote } from '../data/focusQuotes';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PomodoroBreak'>;
@@ -207,7 +208,10 @@ export function PomodoroBreakScreen({ navigation, route }: Props) {
 
         <View style={styles.rightPanel}>
           <View style={styles.streakSection}>
-            <Text style={styles.streakLabel}>🔥 {streakCount}-day streak</Text>
+            <View style={styles.streakRow}>
+              <Image source={uiIcons.fire} style={styles.streakIcon} />
+              <Text style={styles.streakLabel}>{streakCount}-day streak</Text>
+            </View>
 
             <StreakHeatmap
               history={history}
@@ -294,14 +298,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     alignSelf: 'center',
   },
+  streakRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.md,
+    alignSelf: 'stretch',
+  },
+  streakIcon: { width: 28, height: 28, resizeMode: 'contain', marginRight: spacing.xs },
   streakLabel: {
     fontFamily: fonts.display,
     fontSize: fontSizes.xxl,
     color: colors.textDark,
-    marginBottom: spacing.md,
     lineHeight: fontSizes.xxl * lineHeights.normal,
     textAlign: 'center',
-    alignSelf: 'stretch',
   },
   tuklasZone: {
     position: 'absolute',

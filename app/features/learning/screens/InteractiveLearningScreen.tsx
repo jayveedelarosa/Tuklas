@@ -5,6 +5,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../navigation/types';
 import { colors, radii, spacing } from '../../../common/theme/colors';
 import { tuklasMascot } from '../../../common/theme/characterArt';
+import { uiIcons } from '../../../common/theme/uiIcons';
 import { getResponseForBeat } from '../repository/chatbotRepository';
 import { BilingualText } from '../../../common/components/BilingualText';
 import { PrimaryButton } from '../../../common/components/PrimaryButton';
@@ -90,7 +91,7 @@ function UnsortedPile() {
   return (
     <View style={styles.pileWrap} testID="phase2-beat-pile">
       {Array.from({ length: TOTAL_SANTOL }).map((_, i) => (
-        <Text key={i} style={styles.fruit}>🟢</Text>
+        <Image key={i} source={uiIcons.guava} style={styles.fruit} />
       ))}
     </View>
   );
@@ -102,13 +103,13 @@ function GroupingAnimation() {
       {Array.from({ length: GROUPS_OF_TEN }).map((_, rowIndex) => (
         <View key={rowIndex} style={styles.groupRow}>
           {Array.from({ length: GROUP_SIZE }).map((_, i) => (
-            <Text key={i} style={styles.fruit}>🟢</Text>
+            <Image key={i} source={uiIcons.guava} style={styles.fruit} />
           ))}
         </View>
       ))}
       <View style={styles.leftoverRow}>
         {Array.from({ length: LEFTOVER_ONES }).map((_, i) => (
-          <Text key={i} style={styles.fruitSmall}>🟢</Text>
+          <Image key={i} source={uiIcons.guava} style={styles.fruitSmall} />
         ))}
       </View>
     </View>
@@ -122,14 +123,14 @@ function GroupedWithLeftovers({ highlight }: { highlight: 'both' | null }) {
         {Array.from({ length: GROUPS_OF_TEN }).map((_, rowIndex) => (
           <View key={rowIndex} style={styles.groupRow}>
             {Array.from({ length: GROUP_SIZE }).map((_, i) => (
-              <Text key={i} style={styles.fruit}>🟢</Text>
+              <Image key={i} source={uiIcons.guava} style={styles.fruit} />
             ))}
           </View>
         ))}
       </View>
       <View style={[styles.onesBlock, highlight === 'both' && styles.highlighted]}>
         {Array.from({ length: LEFTOVER_ONES }).map((_, i) => (
-          <Text key={i} style={styles.fruitSmall}>🟢</Text>
+          <Image key={i} source={uiIcons.guava} style={styles.fruitSmall} />
         ))}
       </View>
     </View>
@@ -154,8 +155,8 @@ const styles = StyleSheet.create({
   guideImage: { width: 72, height: 72, resizeMode: 'contain' },
   stage: { alignItems: 'center' },
   pileWrap: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', maxWidth: 320 },
-  fruit: { fontSize: 26, margin: 2 },
-  fruitSmall: { fontSize: 20, margin: 2, opacity: 0.85 },
+  fruit: { width: 26, height: 26, resizeMode: 'contain', margin: 2 },
+  fruitSmall: { width: 20, height: 20, resizeMode: 'contain', margin: 2, opacity: 0.85 },
   groupRow: { flexDirection: 'row', borderWidth: 2, borderColor: colors.primary, borderRadius: radii.md, padding: 4, marginBottom: spacing.sm },
   leftoverRow: { flexDirection: 'row', marginTop: spacing.sm },
   tensBlock: { padding: spacing.sm, borderRadius: radii.md },

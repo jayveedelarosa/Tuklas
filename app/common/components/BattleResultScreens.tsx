@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, StyleSheet, Text, View } from 'react-native';
 import { BilingualText } from './BilingualText';
 import { PrimaryButton } from './PrimaryButton';
+import { uiIcons } from '../theme/uiIcons';
 import { colors, radii, spacing } from '../theme/colors';
 import { fonts, fontSizes, lineHeights } from '../theme/typography';
 
@@ -73,7 +74,7 @@ export function BattleVictoryScreen({
     <View style={styles.overlay} testID="victory-block">
       <View style={styles.card}>
         <FadeInCard>
-          <Text style={styles.sparkle}>✨🎉✨</Text>
+          <Image source={uiIcons.celebration} style={styles.sparkle} />
           <BilingualText en="Victory!" tl="Tagumpay!" size="lg" align="center" />
           <Text style={styles.subtitle}>
             You defeated {characterName}! ({correctCount}/{totalQuestions} correct)
@@ -164,7 +165,7 @@ const styles = StyleSheet.create({
     maxWidth: 420,
     width: '90%',
   },
-  sparkle: { fontSize: 32, marginBottom: spacing.sm },
+  sparkle: { width: 64, height: 64, resizeMode: 'contain', marginBottom: spacing.sm },
   somber: { fontSize: 36, marginBottom: spacing.sm },
   subtitle: {
     fontFamily: fonts.body,

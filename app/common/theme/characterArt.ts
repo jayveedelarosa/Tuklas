@@ -1,18 +1,18 @@
 /**
  * Maps folklore character names (from data/levels.json) to bundled art.
- * Sigbin is the only monster with shipped, finished art and the only one
- * battled in the playable vertical slice; Tikbalang/Aswang/Kapre are
- * future roster entries with no art yet and stay locked.
+ * Sigbin is the only monster battled in the playable vertical slice;
+ * Tikbalang and Aswang have their own roster portraits but stay locked
+ * future entries; Kapre has no art yet and falls back to Sigbin.
  */
 export const characterArt = {
   sigbin: {
     calm: require('../../../assets/characters/Sigbin.png'),
   },
   tikbalang: {
-    calm: require('../../../assets/characters/Sigbin.png'),
+    calm: require('../../../assets/characters/Tikbalang.png'),
   },
   aswang: {
-    calm: require('../../../assets/characters/Sigbin.png'),
+    calm: require('../../../assets/characters/Aswang.png'),
   },
   kapre: {
     calm: require('../../../assets/characters/Sigbin.png'),

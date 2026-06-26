@@ -2,8 +2,8 @@ import playersData from '../../../../data/players.json';
 import { PlayerProfile } from '../models/player';
 
 const SAFETY_PLAYERS: PlayerProfile[] = [
-  { id: 'player1', name: 'Player 1', completedLevelIds: ['level1', 'level2', 'level3'], unlockedCharacterIds: ['tikbalang', 'aswang', 'sigbin'], streakCount: 1, thetaStudent: 0, pomodoroSessionHistory: [] },
-  { id: 'player2', name: 'Player 2', completedLevelIds: ['level1', 'level2', 'level3'], unlockedCharacterIds: ['tikbalang', 'aswang', 'sigbin'], streakCount: 1, thetaStudent: 0, pomodoroSessionHistory: [] },
+  { id: 'player1', name: 'Player 1', completedLevelIds: ['level1', 'level2'], unlockedCharacterIds: ['tikbalang', 'aswang', 'sigbin'], streakCount: 1, thetaStudent: 0, pomodoroSessionHistory: [] },
+  { id: 'player2', name: 'Player 2', completedLevelIds: ['level1', 'level2'], unlockedCharacterIds: ['tikbalang', 'aswang', 'sigbin'], streakCount: 1, thetaStudent: 0, pomodoroSessionHistory: [] },
   { id: 'player3', name: 'Player 3', completedLevelIds: ['level1', 'level2'], unlockedCharacterIds: ['tikbalang', 'aswang'], streakCount: 0, thetaStudent: 0, pomodoroSessionHistory: [] },
 ];
 

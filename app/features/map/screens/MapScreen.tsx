@@ -18,6 +18,8 @@ import { BilingualText } from '../../../common/components/BilingualText';
 
 import { tuklasMascot } from '../../../common/theme/characterArt';
 
+import { uiIcons } from '../../../common/theme/uiIcons';
+
 import { colors, spacing } from '../../../common/theme/colors';
 
 import { fonts, fontSizes } from '../../../common/theme/typography';
@@ -262,7 +264,13 @@ export function MapScreen({ navigation }: Props) {
 
               <Image source={tuklasMascot.idle2} style={styles.headerMascot} />
 
-              <Text style={styles.streakText}>🔥 {streakCount}</Text>
+              <View style={styles.streakRow}>
+
+                <Image source={uiIcons.fire} style={styles.streakIcon} />
+
+                <Text style={styles.streakText}>{streakCount}</Text>
+
+              </View>
 
             </View>
 
@@ -270,7 +278,7 @@ export function MapScreen({ navigation }: Props) {
 
               <Pressable onPress={() => navigation.navigate('Roster')} style={styles.headerButton} testID="open-roster">
 
-                <Text style={styles.headerButtonGlyph}>🧌</Text>
+                <Image source={uiIcons.goblin} style={styles.headerButtonIcon} />
 
               </Pressable>
 
@@ -416,11 +424,17 @@ const styles = StyleSheet.create({
 
   headerButtonGlyph: { fontSize: 20 },
 
+  headerButtonIcon: { width: 22, height: 22, resizeMode: 'contain' },
+
   backGlyph: { fontFamily: fonts.display, fontSize: fontSizes.lg, color: colors.textDark },
 
   headerCenter: { alignItems: 'center' },
 
   headerMascot: { width: 40, height: 40, resizeMode: 'contain' },
+
+  streakRow: { flexDirection: 'row', alignItems: 'center' },
+
+  streakIcon: { width: 14, height: 14, resizeMode: 'contain', marginRight: 3 },
 
   streakText: {
 

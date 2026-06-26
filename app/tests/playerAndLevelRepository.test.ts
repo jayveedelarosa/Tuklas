@@ -9,9 +9,9 @@ describe('playerRepository', () => {
     expect(players.map((p) => p.id)).toEqual(['player1', 'player2', 'player3']);
   });
 
-  it('Player 1 and Player 2 load with all 3 levels beaten', () => {
-    expect(getPlayer('player1')?.completedLevelIds).toEqual(['level1', 'level2', 'level3']);
-    expect(getPlayer('player2')?.completedLevelIds).toEqual(['level1', 'level2', 'level3']);
+  it('Player 1 and Player 2 load with levels 1-2 done, dropping fresh into level 3', () => {
+    expect(getPlayer('player1')?.completedLevelIds).toEqual(['level1', 'level2']);
+    expect(getPlayer('player2')?.completedLevelIds).toEqual(['level1', 'level2']);
   });
 
   it('Player 3 loads with levels 1-2 done, dropping fresh into level 3', () => {

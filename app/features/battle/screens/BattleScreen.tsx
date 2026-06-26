@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { ImageBackground, StyleSheet, Text, View } from 'react-native';
+import { ImageBackground, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../navigation/types';
@@ -18,6 +18,7 @@ import { PlayerBattleDisplay } from '../../../common/components/PlayerBattleDisp
 import { TuklasNoticedBanner } from '../../../common/components/TuklasNoticedBanner';
 import { BilingualText } from '../../../common/components/BilingualText';
 import { BattleVictoryScreen, BattleDefeatScreen } from '../../../common/components/BattleResultScreens';
+import { uiIcons } from '../../../common/theme/uiIcons';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Battle'>;
 
@@ -222,27 +223,30 @@ export function BattleScreen({ navigation, route }: Props) {
 
             <View style={styles.bottomRow}>
               <View style={styles.dialogueBox}>
-                {feedbackPhase === 'answering' ? (
-                  <QuestionCard
-                    prompt={displayedQuestion.prompt}
-                    promptTagalog={displayedQuestion.promptTagalog}
-                    topicId={displayedQuestion.topicId}
-                    variant="battle"
-                    showHint={showHintCopy}
-                    hintEn={hintCopy?.en}
-                    hintTl={hintCopy?.tl}
-                  />
-                ) : (
-                  <View style={styles.feedbackCenter}>
-                    <BilingualText
-                      en={engine.lastResult?.wasCorrect ? '🎉 Correct! Great job!' : "Not quite — let's try again."}
-                      tl={engine.lastResult?.wasCorrect ? 'Tama! Galing!' : 'Hindi pa tama — subukan ulit.'}
-                      size="md"
-                      color="#fff"
-                      align="center"
+                <ScrollView style={styles.dialogueScroll} contentContainerStyle={styles.dialogueScrollContent}>
+                  {feedbackPhase === 'answering' ? (
+                    <QuestionCard
+                      prompt={displayedQuestion.prompt}
+                      promptTagalog={displayedQuestion.promptTagalog}
+                      topicId={displayedQuestion.topicId}
+                      variant="battle"
+                      showHint={showHintCopy}
+                      hintEn={hintCopy?.en}
+                      hintTl={hintCopy?.tl}
                     />
-                  </View>
-                )}
+                  ) : (
+                    <View style={styles.feedbackCenter}>
+                      <BilingualText
+                        en={engine.lastResult?.wasCorrect ? 'Correct! Great job!' : "Not quite — let's try again."}
+                        tl={engine.lastResult?.wasCorrect ? 'Tama! Galing!' : 'Hindi pa tama — subukan ulit.'}
+                        size="md"
+                        color="#fff"
+                        align="center"
+                        icon={engine.lastResult?.wasCorrect ? uiIcons.celebration : undefined}
+                      />
+                    </View>
+                  )}
+                </ScrollView>
               </View>
 
               <View style={styles.menuBox}>
@@ -275,6 +279,7 @@ export function BattleScreen({ navigation, route }: Props) {
                       disabled={selectedIndex === null}
                       style={styles.submitButton}
                       testID="submit-answer"
+                      compact
                     />
                   </View>
                 ) : (
@@ -300,7 +305,8 @@ export function BattleScreen({ navigation, route }: Props) {
 function HintButton({ ready, onPress }: { ready: boolean; onPress: () => void }) {
   return (
     <PrimaryButton
-      label={ready ? '💡 Hint' : '💡'}
+      label={ready ? 'Hint' : ''}
+      icon={uiIcons.lightbulb}
       onPress={onPress}
       variant={ready ? 'secondary' : 'ghost'}
       style={styles.hintButton}
@@ -337,11 +343,11 @@ const styles = StyleSheet.create({
     borderRadius: radii.md,
     borderWidth: 3,
     borderColor: colors.battleDialogueBorder,
-    padding: spacing.sm,
     marginRight: spacing.sm,
-    justifyContent: 'center',
     overflow: 'hidden',
   },
+  dialogueScroll: { flex: 1 },
+  dialogueScrollContent: { padding: spacing.sm, flexGrow: 1, justifyContent: 'center' },
   feedbackCenter: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   menuBox: {
     flex: 1,
@@ -355,8 +361,8 @@ const styles = StyleSheet.create({
   answeringStack: { flex: 1, alignSelf: 'stretch', minHeight: 0 },
   choiceGrid: { flex: 1, minHeight: 0 },
   choiceRow: { flex: 1, flexDirection: 'row', minHeight: 0 },
-  choiceCell: { flex: 1, minWidth: 0, marginHorizontal: 3, marginVertical: 2 },
-  submitButton: { minHeight: 40, marginTop: 2, alignSelf: 'stretch' },
+  choiceCell: { flex: 1, minWidth: 0, marginHorizontal: 10, marginVertical: 2 },
+  submitButton: { minHeight: 36, marginTop: 2, alignSelf: 'stretch' },
   feedbackMenu: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   nextButton: { minHeight: 44, width: '55%' },
 });

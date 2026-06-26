@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
 import { fonts, fontSizes, lineHeights } from '../theme/typography';
 
@@ -9,19 +9,25 @@ interface BilingualTextProps {
   size?: 'sm' | 'md' | 'lg';
   color?: string;
   align?: 'left' | 'center';
+  icon?: ImageSourcePropType;
 }
 
 /** BR-08: every English UI string ships with a Tagalog line directly beneath it. */
-export function BilingualText({ en, tl, size = 'md', color = colors.textDark, align = 'left' }: BilingualTextProps) {
+export function BilingualText({ en, tl, size = 'md', color = colors.textDark, align = 'left', icon }: BilingualTextProps) {
   return (
-    <View style={{ alignItems: align === 'center' ? 'center' : 'flex-start' }}>
-      <Text style={[styles[`${size}En`], { color, textAlign: align }]}>{en}</Text>
-      <Text style={[styles[`${size}Tl`], { color, textAlign: align }]}>{tl}</Text>
+    <View style={styles.row}>
+      {icon ? <Image source={icon} style={styles.icon} /> : null}
+      <View style={{ alignItems: align === 'center' ? 'center' : 'flex-start' }}>
+        <Text style={[styles[`${size}En`], { color, textAlign: align }]}>{en}</Text>
+        <Text style={[styles[`${size}Tl`], { color, textAlign: align }]}>{tl}</Text>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  row: { flexDirection: 'row', alignItems: 'center' },
+  icon: { width: 22, height: 22, resizeMode: 'contain', marginRight: 6 },
   smEn: {
     fontFamily: fonts.body,
     fontSize: fontSizes.sm,

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import { Animated, Easing, Image, StyleSheet, View } from 'react-native';
 import { colors, radii, spacing } from '../theme/colors';
+import { uiIcons } from '../theme/uiIcons';
 import { BilingualText } from './BilingualText';
 import { TopicId } from '../../features/topics/models/question';
 
@@ -14,10 +15,10 @@ interface QuestionCardProps {
   hintTl?: string;
 }
 
-const TOPIC_GLYPHS: Record<TopicId, string> = {
-  'number-sense': '🔢',
-  'one-more-one-less': '🥭',
-  regrouping: '🟢',
+const TOPIC_GLYPHS: Record<TopicId, typeof uiIcons[keyof typeof uiIcons]> = {
+  'number-sense': uiIcons.numberSense,
+  'one-more-one-less': uiIcons.mango,
+  regrouping: uiIcons.guava,
 };
 
 const HINT_ANIM_MS = 180;
@@ -60,7 +61,13 @@ export function QuestionCard({
 
   return (
     <View style={[styles.card, battle && styles.cardBattle]} testID="question-card">
-      {!battle && <Text style={styles.visualAid}>{TOPIC_GLYPHS[topicId].repeat(3)}</Text>}
+      {!battle && (
+        <View style={styles.visualAidRow}>
+          {[0, 1, 2].map((i) => (
+            <Image key={i} source={TOPIC_GLYPHS[topicId]} style={styles.visualAid} />
+          ))}
+        </View>
+      )}
       <View style={battle ? styles.battleContent : undefined}>
         <BilingualText
           en={prompt}
@@ -112,5 +119,6 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
     width: '100%',
   },
-  visualAid: { fontSize: 36, marginBottom: spacing.sm },
+  visualAidRow: { flexDirection: 'row', marginBottom: spacing.sm },
+  visualAid: { width: 36, height: 36, resizeMode: 'contain', marginHorizontal: 2 },
 });
