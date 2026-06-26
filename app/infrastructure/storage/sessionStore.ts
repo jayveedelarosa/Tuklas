@@ -26,9 +26,13 @@ interface SessionState {
   currentSessionLength: number;
   currentBreakLength: number;
   battle: BattleEngineState | null;
+  mapHintDismissed: boolean;
+  levelBestStars: Record<string, number>;
   hydrateFromPlayer: (player: PlayerProfile) => void;
   setBattleState: (battle: BattleEngineState | null) => void;
   completeLevel: (levelId: string, characterId: string) => void;
+  recordLevelStars: (levelId: string, stars: number) => void;
+  dismissMapHint: () => void;
   recordPomodoroSession: (record: PomodoroSessionRecord) => void;
   applyPomodoroAdjustment: (sessionLength: number, breakLength: number) => void;
   resetSession: () => void;
@@ -44,6 +48,8 @@ const INITIAL_STATE = {
   currentSessionLength: BASELINE_SESSION_MIN,
   currentBreakLength: BASELINE_BREAK_MIN,
   battle: null as BattleEngineState | null,
+  mapHintDismissed: false,
+  levelBestStars: {} as Record<string, number>,
 };
 
 export const useSessionStore = create<SessionState>((set, get) => ({
@@ -61,6 +67,8 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       currentSessionLength: computeSessionLength(completionRate),
       currentBreakLength: computeBreakLength(completionRate),
       battle: null,
+      mapHintDismissed: false,
+      levelBestStars: {},
     });
   },
 
@@ -76,6 +84,16 @@ export const useSessionStore = create<SessionState>((set, get) => ({
         ? state.unlockedCharacterIds
         : [...state.unlockedCharacterIds, characterId],
     })),
+
+  recordLevelStars: (levelId, stars) =>
+    set((state) => ({
+      levelBestStars: {
+        ...state.levelBestStars,
+        [levelId]: Math.max(state.levelBestStars[levelId] ?? 0, stars),
+      },
+    })),
+
+  dismissMapHint: () => set({ mapHintDismissed: true }),
 
   recordPomodoroSession: (record) =>
     set((state) => ({

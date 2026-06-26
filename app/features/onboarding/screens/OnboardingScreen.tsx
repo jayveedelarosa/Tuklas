@@ -6,6 +6,7 @@ import { RootStackParamList } from '../../../navigation/types';
 import { listPlayers } from '../repository/playerRepository';
 import { useSessionStore } from '../../../infrastructure/storage/sessionStore';
 import { colors, radii, spacing } from '../../../common/theme/colors';
+import { fonts, fontSizes } from '../../../common/theme/typography';
 import { appLogo } from '../../../common/theme/characterArt';
 import { BilingualText } from '../../../common/components/BilingualText';
 
@@ -77,9 +78,9 @@ const styles = StyleSheet.create({
     width: 220,
   },
   cardPressed: { transform: [{ scale: 0.98 }] },
-  cardName: { fontSize: 20, fontWeight: '800', color: colors.textDark },
-  cardProgress: { fontSize: 13, color: colors.textMuted, marginTop: 4, marginBottom: 6 },
+  cardName: { fontFamily: fonts.display, fontSize: fontSizes.lg, color: colors.textDark },
+  cardProgress: { fontFamily: fonts.body, fontSize: fontSizes.sm, color: colors.textMuted, marginTop: 4, marginBottom: 6 },
   progressTrack: { height: 8, borderRadius: radii.pill, backgroundColor: colors.border, overflow: 'hidden' },
   progressFill: { height: '100%', backgroundColor: colors.primary },
-  cardStreak: { fontSize: 13, color: colors.textDark, marginTop: spacing.sm, fontWeight: '600' },
+  cardStreak: { fontFamily: fonts.body, fontSize: fontSizes.sm, color: colors.textDark, marginTop: spacing.sm },
 });

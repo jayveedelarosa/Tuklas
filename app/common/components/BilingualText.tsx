@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors } from '../theme/colors';
+import { fonts, fontSizes, lineHeights } from '../theme/typography';
 
 interface BilingualTextProps {
   en: string;
@@ -21,10 +22,40 @@ export function BilingualText({ en, tl, size = 'md', color = colors.textDark, al
 }
 
 const styles = StyleSheet.create({
-  smEn: { fontSize: 13, fontWeight: '600' },
-  smTl: { fontSize: 11, fontWeight: '400', opacity: 0.75, marginTop: 1 },
-  mdEn: { fontSize: 17, fontWeight: '700' },
-  mdTl: { fontSize: 14, fontWeight: '400', opacity: 0.75, marginTop: 2 },
-  lgEn: { fontSize: 24, fontWeight: '800' },
-  lgTl: { fontSize: 17, fontWeight: '500', opacity: 0.75, marginTop: 4 },
+  smEn: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    lineHeight: fontSizes.sm * lineHeights.normal,
+  },
+  smTl: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.xs,
+    lineHeight: fontSizes.xs * lineHeights.relaxed,
+    opacity: 0.8,
+    marginTop: 2,
+  },
+  mdEn: {
+    fontFamily: fonts.display,
+    fontSize: fontSizes.md,
+    lineHeight: fontSizes.md * lineHeights.normal,
+  },
+  mdTl: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    lineHeight: fontSizes.sm * lineHeights.relaxed,
+    opacity: 0.8,
+    marginTop: 4,
+  },
+  lgEn: {
+    fontFamily: fonts.display,
+    fontSize: fontSizes.xl,
+    lineHeight: fontSizes.xl * lineHeights.normal,
+  },
+  lgTl: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.md,
+    lineHeight: fontSizes.md * lineHeights.relaxed,
+    opacity: 0.8,
+    marginTop: 4,
+  },
 });

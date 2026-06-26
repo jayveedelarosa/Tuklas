@@ -23,6 +23,8 @@ describe('Onboarding -> Map -> Phase 2 -> Battle -> Pomodoro smoke flow', () => 
     await waitFor(() => expect(getByTestId('open-roster')).toBeTruthy());
     expect(getByTestId('level-node-level3')).toBeTruthy();
     await fireEvent.press(getByTestId('level-node-level3'));
+    await waitFor(() => expect(getByTestId('level-play-button')).toBeTruthy());
+    await fireEvent.press(getByTestId('level-play-button'));
 
     await waitFor(() => expect(getByTestId('phase2-beat-pile')).toBeTruthy());
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { colors, radii, spacing } from '../theme/colors';
+import { fonts, fontSizes, lineHeights } from '../theme/typography';
 import { HealthBar } from './HealthBar';
 
 interface MonsterDisplayProps {
@@ -8,22 +9,17 @@ interface MonsterDisplayProps {
   hp: number;
   maxHp: number;
   hpRatio: number;
+  hpAnimationKey?: string;
 }
 
-/**
- * Opponent status box only — Sigbin's sprite is already painted into the
- * Level 3 background art, so this renders no Image of its own (doing so
- * would duplicate the character). Anchored bottom-right, swapped with
- * PlayerBattleDisplay's box per user feedback.
- */
-export function MonsterDisplay({ characterName, hp, maxHp, hpRatio }: MonsterDisplayProps) {
+export function MonsterDisplay({ characterName, hp, maxHp, hpRatio, hpAnimationKey }: MonsterDisplayProps) {
   return (
     <View style={styles.statusBox} testID="monster-status-box">
       <View style={styles.nameRow}>
         <Text style={styles.name}>{characterName.toUpperCase()}</Text>
         <Text style={styles.level}>Lv5</Text>
       </View>
-      <HealthBar ratio={hpRatio} />
+      <HealthBar ratio={hpRatio} animationKey={hpAnimationKey} />
       <Text style={styles.hpNumbers}>{hp}/{maxHp}</Text>
     </View>
   );
@@ -42,7 +38,22 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   nameRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.xs },
-  name: { fontSize: 13, fontWeight: '800', color: colors.textDark },
-  level: { fontSize: 12, fontWeight: '700', color: colors.textMuted },
-  hpNumbers: { fontSize: 10, color: colors.textMuted, textAlign: 'right', marginTop: 2 },
+  name: {
+    fontFamily: fonts.display,
+    fontSize: fontSizes.xs,
+    color: colors.textDark,
+    lineHeight: fontSizes.xs * lineHeights.normal,
+  },
+  level: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.xs,
+    color: colors.textMuted,
+  },
+  hpNumbers: {
+    fontFamily: fonts.body,
+    fontSize: 10,
+    color: colors.textMuted,
+    textAlign: 'right',
+    marginTop: 2,
+  },
 });

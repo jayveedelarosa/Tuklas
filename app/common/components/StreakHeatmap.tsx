@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native';
 import { colors, radii, spacing } from '../theme/colors';
+import { fonts, fontSizes, lineHeights } from '../theme/typography';
 import { PomodoroSessionRecord } from '../../features/pomodoro/models/pomodoro';
 
 interface StreakHeatmapProps {
@@ -62,13 +63,18 @@ function LegendDot({ color, label }: { color: string; label: string }) {
   );
 }
 
-const CELL_SIZE = 18;
+const CELL_SIZE = 28;
 
 const styles = StyleSheet.create({
-  grid: { flexDirection: 'row', flexWrap: 'wrap', width: CELL_SIZE * 7 + 6 * 4 },
-  cell: { width: CELL_SIZE, height: CELL_SIZE, borderRadius: 4, margin: 2 },
-  legendRow: { flexDirection: 'row', marginTop: spacing.sm, flexWrap: 'wrap' },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', width: CELL_SIZE * 7 + 6 * 5 },
+  cell: { width: CELL_SIZE, height: CELL_SIZE, borderRadius: 6, margin: 3 },
+  legendRow: { flexDirection: 'row', marginTop: spacing.md, flexWrap: 'wrap', justifyContent: 'center' },
   legendItem: { flexDirection: 'row', alignItems: 'center', marginRight: spacing.md, marginTop: spacing.xs },
-  legendDot: { width: 10, height: 10, borderRadius: 5, marginRight: 4 },
-  legendLabel: { fontSize: 12, color: colors.textMuted },
+  legendDot: { width: 12, height: 12, borderRadius: 6, marginRight: 6 },
+  legendLabel: {
+    fontFamily: fonts.body,
+    fontSize: fontSizes.sm,
+    color: colors.textMuted,
+    lineHeight: fontSizes.sm * lineHeights.normal,
+  },
 });

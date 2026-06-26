@@ -9,6 +9,7 @@ import { useSessionStore } from '../../../infrastructure/storage/sessionStore';
 import { useBattleEngine } from '../service/useBattleEngine';
 import { HINT_OFFER_THRESHOLD } from '../service/hintFrequency';
 import { colors, radii, spacing } from '../../../common/theme/colors';
+import { fonts, fontSizes } from '../../../common/theme/typography';
 import { QuestionCard } from '../../../common/components/QuestionCard';
 import { ChoiceButton } from '../../../common/components/ChoiceButton';
 import { PrimaryButton } from '../../../common/components/PrimaryButton';
@@ -16,6 +17,7 @@ import { MonsterDisplay } from '../../../common/components/MonsterDisplay';
 import { PlayerBattleDisplay } from '../../../common/components/PlayerBattleDisplay';
 import { TuklasNoticedBanner } from '../../../common/components/TuklasNoticedBanner';
 import { BilingualText } from '../../../common/components/BilingualText';
+import { BattleVictoryScreen, BattleDefeatScreen } from '../../../common/components/BattleResultScreens';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Battle'>;
 
@@ -36,6 +38,13 @@ const HINT_COPY: Record<string, { en: string; tl: string }> = {
   },
 };
 
+function starsFromHp(playerHp: number, maxPlayerHp: number): number {
+  const ratio = maxPlayerHp > 0 ? playerHp / maxPlayerHp : 0;
+  if (ratio >= 0.8) return 3;
+  if (ratio >= 0.4) return 2;
+  return 1;
+}
+
 export function BattleScreen({ navigation, route }: Props) {
   const { levelId } = route.params;
   const level = useMemo(() => getLevel(levelId), [levelId]);
@@ -46,26 +55,22 @@ export function BattleScreen({ navigation, route }: Props) {
   const thetaStudent = useSessionStore((s) => s.thetaStudent);
   const setBattleState = useSessionStore((s) => s.setBattleState);
   const completeLevel = useSessionStore((s) => s.completeLevel);
+  const recordLevelStars = useSessionStore((s) => s.recordLevelStars);
 
   const engine = useBattleEngine('regrouping', questions, thetaStudent);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [feedbackPhase, setFeedbackPhase] = useState<'answering' | 'revealed'>('answering');
-  // Frozen snapshot of whichever question is on screen — for a correct answer the
-  // engine advances state.currentQuestionId immediately, so the 'revealed' feedback
-  // phase can't read engine.currentQuestion directly without showing the *next*
-  // question's choices while claiming to give feedback on the one just answered.
   const [displayedQuestion, setDisplayedQuestion] = useState(engine.currentQuestion);
   const [showHintCopy, setShowHintCopy] = useState(false);
-  const [victoryAcknowledged, setVictoryAcknowledged] = useState(false);
+  const [showVictory, setShowVictory] = useState(false);
+  const [victoryStars, setVictoryStars] = useState(1);
   const wasDefeatedRef = useRef(false);
+  const hpTick = useRef(0);
 
   useEffect(() => {
     setBattleState(engine.state);
   }, [engine.state]);
 
-  // engine.resetBattle() replaces the engine's internal state synchronously, so
-  // engine.currentQuestion is stale until the next render — resync the frozen
-  // snapshot once that render actually lands.
   useEffect(() => {
     if (wasDefeatedRef.current && !engine.state.isDefeated) {
       setDisplayedQuestion(engine.currentQuestion);
@@ -74,20 +79,18 @@ export function BattleScreen({ navigation, route }: Props) {
   }, [engine.state.isDefeated]);
 
   useEffect(() => {
-    if (engine.setCleared && level) {
+    if (engine.setCleared && level && !showVictory) {
       completeLevel(level.id, level.characterName.toLowerCase());
+      const stars = starsFromHp(engine.state.playerHp, engine.state.maxPlayerHp);
+      setVictoryStars(stars);
+      recordLevelStars(level.id, stars);
+      setShowVictory(true);
     }
-  }, [engine.setCleared]);
+  }, [engine.setCleared, level, showVictory]);
 
   useEffect(() => {
     engine.startTimer();
   }, []);
-
-  useEffect(() => {
-    if (engine.setCleared && victoryAcknowledged) {
-      navigation.replace('PomodoroBreak', { fromBattleVictory: true });
-    }
-  }, [engine.setCleared, victoryAcknowledged]);
 
   if (!level) {
     return (
@@ -101,6 +104,7 @@ export function BattleScreen({ navigation, route }: Props) {
   const monsterHp = monsterMaxHp - engine.state.correctlyAnsweredIds.length;
   const hpRatio = monsterHp / monsterMaxHp;
   const playerHpRatio = engine.state.playerHp / engine.state.maxPlayerHp;
+  const hpKey = `${engine.state.playerHp}-${monsterHp}-${hpTick.current}`;
 
   const handleChoicePress = (index: number) => {
     if (feedbackPhase === 'revealed') return;
@@ -112,13 +116,11 @@ export function BattleScreen({ navigation, route }: Props) {
     setDisplayedQuestion(engine.currentQuestion);
     setFeedbackPhase('revealed');
     engine.submit(selectedIndex);
+    hpTick.current += 1;
   };
 
   const handleContinue = () => {
-    if (engine.setCleared) {
-      setVictoryAcknowledged(true);
-      return;
-    }
+    if (engine.setCleared) return;
     engine.startTimer();
     setSelectedIndex(null);
     setFeedbackPhase('answering');
@@ -132,6 +134,20 @@ export function BattleScreen({ navigation, route }: Props) {
     setSelectedIndex(null);
     setFeedbackPhase('answering');
     setShowHintCopy(false);
+    setShowVictory(false);
+    hpTick.current += 1;
+  };
+
+  const handleVictoryContinue = () => {
+    navigation.replace('PomodoroBreak', { fromBattleVictory: true });
+  };
+
+  const handleVictoryReplay = () => {
+    handleRetry();
+  };
+
+  const handleDefeatMap = () => {
+    navigation.replace('Map');
   };
 
   const choiceState = (index: number): 'idle' | 'selected' | 'correct' | 'incorrect' => {
@@ -144,165 +160,137 @@ export function BattleScreen({ navigation, route }: Props) {
   const hintReady = engine.state.hintFrequency >= HINT_OFFER_THRESHOLD;
   const hintCopy = HINT_COPY[engine.state.currentTopicId];
 
-  if (engine.setCleared && victoryAcknowledged) {
-    return null;
-  }
-
   return (
     <SafeAreaView style={styles.screen}>
       <ImageBackground source={battleBg} style={styles.bg} resizeMode="cover">
         <TuklasNoticedBanner notice={engine.noticeQueue[0] ?? null} onDismiss={engine.dismissNotice} />
 
-        {!engine.setCleared && !engine.state.isDefeated && (
-          <View style={styles.topBar}>
-            <Text style={styles.questionCounter}>
-              {engine.state.correctlyAnsweredIds.length}/{engine.state.questions.length}
-            </Text>
-            <HintButton
-              ready={hintReady}
-              hintsUsed={engine.state.hintsUsedThisSession}
-              onPress={() => {
-                engine.useHint();
-                setShowHintCopy(true);
-              }}
-            />
-          </View>
+        {showVictory && (
+          <BattleVictoryScreen
+            characterName={level.characterName}
+            starsEarned={victoryStars}
+            correctCount={engine.state.correctlyAnsweredIds.length}
+            totalQuestions={engine.state.questions.length}
+            onContinue={handleVictoryContinue}
+            onReplay={handleVictoryReplay}
+          />
         )}
 
-        <View style={styles.sceneArea}>
-          <MonsterDisplay
+        {engine.state.isDefeated && !showVictory && (
+          <BattleDefeatScreen
             characterName={level.characterName}
-            hp={monsterHp}
-            maxHp={monsterMaxHp}
-            hpRatio={hpRatio}
+            onRetry={handleRetry}
+            onMap={handleDefeatMap}
           />
-          {!engine.setCleared && (
-            <PlayerBattleDisplay
-              hp={engine.state.playerHp}
-              maxHp={engine.state.maxPlayerHp}
-              hpRatio={playerHpRatio}
-            />
-          )}
-        </View>
+        )}
 
-        <View style={styles.bottomRow}>
-          <View style={styles.dialogueBox}>
-            {engine.state.isDefeated ? (
-              <View testID="defeat-block">
-                <BilingualText
-                  en={`${level.characterName} got the better of you this time.`}
-                  tl={`Natalo ka ni ${level.characterName} ngayon.`}
-                  size="sm"
-                  color="#fff"
-                />
-              </View>
-            ) : engine.setCleared ? (
-              <View testID="victory-block">
-                <BilingualText
-                  en={`You defeated ${level.characterName}!`}
-                  tl={`Natalo mo si ${level.characterName}!`}
-                  size="sm"
-                  color="#fff"
-                />
-              </View>
-            ) : feedbackPhase === 'answering' ? (
-              <>
-                <QuestionCard
-                  prompt={displayedQuestion.prompt}
-                  promptTagalog={displayedQuestion.promptTagalog}
-                  topicId={displayedQuestion.topicId}
-                  variant="battle"
-                />
-                {showHintCopy && hintCopy ? (
-                  <View testID="hint-copy">
-                    <BilingualText en={hintCopy.en} tl={hintCopy.tl} size="sm" color="#FFE3C2" />
+        {!showVictory && !engine.state.isDefeated && (
+          <>
+            <View style={styles.topBar}>
+              <Text style={styles.questionCounter}>
+                {engine.state.correctlyAnsweredIds.length}/{engine.state.questions.length}
+              </Text>
+              <HintButton
+                ready={hintReady}
+                onPress={() => {
+                  engine.useHint();
+                  setShowHintCopy(true);
+                }}
+              />
+            </View>
+
+            <View style={styles.sceneArea}>
+              <MonsterDisplay
+                characterName={level.characterName}
+                hp={monsterHp}
+                maxHp={monsterMaxHp}
+                hpRatio={hpRatio}
+                hpAnimationKey={`m-${hpKey}`}
+              />
+              <PlayerBattleDisplay
+                hp={engine.state.playerHp}
+                maxHp={engine.state.maxPlayerHp}
+                hpRatio={playerHpRatio}
+                hpAnimationKey={`p-${hpKey}`}
+              />
+            </View>
+
+            <View style={styles.bottomRow}>
+              <View style={styles.dialogueBox}>
+                {feedbackPhase === 'answering' ? (
+                  <QuestionCard
+                    prompt={displayedQuestion.prompt}
+                    promptTagalog={displayedQuestion.promptTagalog}
+                    topicId={displayedQuestion.topicId}
+                    variant="battle"
+                    showHint={showHintCopy}
+                    hintEn={hintCopy?.en}
+                    hintTl={hintCopy?.tl}
+                  />
+                ) : (
+                  <View style={styles.feedbackCenter}>
+                    <BilingualText
+                      en={engine.lastResult?.wasCorrect ? '🎉 Correct! Great job!' : "Not quite — let's try again."}
+                      tl={engine.lastResult?.wasCorrect ? 'Tama! Galing!' : 'Hindi pa tama — subukan ulit.'}
+                      size="md"
+                      color="#fff"
+                      align="center"
+                    />
                   </View>
-                ) : null}
-              </>
-            ) : (
-              <BilingualText
-                en={engine.lastResult?.wasCorrect ? '🎉 Correct! Great job!' : "Not quite — let's try again."}
-                tl={engine.lastResult?.wasCorrect ? 'Tama! Galing!' : 'Hindi pa tama — subukan ulit.'}
-                size="md"
-                color="#fff"
-                align="center"
-              />
-            )}
-          </View>
-
-          <View style={styles.menuBox}>
-            {engine.state.isDefeated ? (
-              <PrimaryButton
-                label="Try again"
-                labelTagalog="Subukan muli"
-                onPress={handleRetry}
-                style={styles.menuButton}
-                testID="retry-button"
-              />
-            ) : engine.setCleared ? (
-              <PrimaryButton
-                label="Continue"
-                labelTagalog="Magpatuloy"
-                onPress={handleContinue}
-                style={styles.menuButton}
-                testID="acknowledge-victory"
-              />
-            ) : feedbackPhase === 'answering' ? (
-              <View style={styles.answeringStack}>
-                <View style={styles.choiceGrid}>
-                  {[0, 1].map((rowIndex) => (
-                    <View key={rowIndex} style={styles.choiceRow}>
-                      {displayedQuestion.choices.slice(rowIndex * 2, rowIndex * 2 + 2).map((choice, colIndex) => {
-                        const index = rowIndex * 2 + colIndex;
-                        return (
-                          <ChoiceButton
-                            key={`${displayedQuestion.id}-${index}`}
-                            label={choice}
-                            state={choiceState(index)}
-                            onPress={() => handleChoicePress(index)}
-                            testID={`choice-${index}`}
-                            style={styles.choiceCell}
-                            compact
-                          />
-                        );
-                      })}
-                    </View>
-                  ))}
-                </View>
-                <PrimaryButton
-                  label="Submit"
-                  labelTagalog="Sagutin"
-                  onPress={handleSubmit}
-                  disabled={selectedIndex === null}
-                  style={styles.menuButton}
-                  testID="submit-answer"
-                />
+                )}
               </View>
-            ) : (
-              <PrimaryButton
-                label="Next"
-                labelTagalog="Susunod"
-                onPress={handleContinue}
-                style={styles.menuButton}
-                testID="continue-button"
-              />
-            )}
-          </View>
-        </View>
+
+              <View style={styles.menuBox}>
+                {feedbackPhase === 'answering' ? (
+                  <View style={styles.answeringStack}>
+                    <View style={styles.choiceGrid}>
+                      {[0, 1].map((rowIndex) => (
+                        <View key={rowIndex} style={styles.choiceRow}>
+                          {displayedQuestion.choices.slice(rowIndex * 2, rowIndex * 2 + 2).map((choice, colIndex) => {
+                            const index = rowIndex * 2 + colIndex;
+                            return (
+                              <ChoiceButton
+                                key={`${displayedQuestion.id}-${index}`}
+                                label={choice}
+                                state={choiceState(index)}
+                                onPress={() => handleChoicePress(index)}
+                                testID={`choice-${index}`}
+                                style={styles.choiceCell}
+                                compact
+                              />
+                            );
+                          })}
+                        </View>
+                      ))}
+                    </View>
+                    <PrimaryButton
+                      label="Submit"
+                      labelTagalog="Sagutin"
+                      onPress={handleSubmit}
+                      disabled={selectedIndex === null}
+                      style={styles.submitButton}
+                      testID="submit-answer"
+                    />
+                  </View>
+                ) : (
+                  <PrimaryButton
+                    label="Next"
+                    labelTagalog="Susunod"
+                    onPress={handleContinue}
+                    style={styles.nextButton}
+                    testID="continue-button"
+                  />
+                )}
+              </View>
+            </View>
+          </>
+        )}
       </ImageBackground>
     </SafeAreaView>
   );
 }
 
-function HintButton({
-  ready,
-  hintsUsed,
-  onPress,
-}: {
-  ready: boolean;
-  hintsUsed: number;
-  onPress: () => void;
-}) {
+function HintButton({ ready, onPress }: { ready: boolean; onPress: () => void }) {
   return (
     <PrimaryButton
       label={ready ? '💡 Hint' : '💡'}
@@ -325,8 +313,8 @@ const styles = StyleSheet.create({
     paddingTop: spacing.xs,
   },
   questionCounter: {
-    fontSize: 13,
-    fontWeight: '800',
+    fontFamily: fonts.display,
+    fontSize: fontSizes.xs,
     color: '#fff',
     backgroundColor: '#00000066',
     borderRadius: radii.pill,
@@ -346,18 +334,20 @@ const styles = StyleSheet.create({
     marginRight: spacing.sm,
     justifyContent: 'center',
   },
+  feedbackCenter: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   menuBox: {
     flex: 1,
     backgroundColor: colors.surface,
     borderRadius: radii.md,
     borderWidth: 3,
     borderColor: colors.battleMenuBorder,
-    padding: spacing.xs,
+    padding: spacing.sm,
     justifyContent: 'center',
   },
   answeringStack: { flex: 1, alignSelf: 'stretch' },
-  choiceGrid: { flex: 1 },
-  choiceRow: { flex: 1, flexDirection: 'row' },
-  choiceCell: { flex: 1, marginHorizontal: 2, marginVertical: 2 },
-  menuButton: { minHeight: 40, paddingVertical: 4, marginTop: 2, alignSelf: 'stretch' },
+  choiceGrid: { flex: 1, gap: 10 },
+  choiceRow: { flex: 1, flexDirection: 'row', gap: 10 },
+  choiceCell: { flex: 1 },
+  submitButton: { minHeight: 44, marginTop: 12, alignSelf: 'stretch' },
+  nextButton: { minHeight: 44, alignSelf: 'center', width: '55%' },
 });

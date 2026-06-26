@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Animated, LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 import { colors, radii, spacing } from '../theme/colors';
 import { BilingualText } from './BilingualText';
 import { TopicId } from '../../features/topics/models/question';
@@ -9,6 +9,9 @@ interface QuestionCardProps {
   promptTagalog: string;
   topicId: TopicId;
   variant?: 'default' | 'battle';
+  showHint?: boolean;
+  hintEn?: string;
+  hintTl?: string;
 }
 
 const TOPIC_GLYPHS: Record<TopicId, string> = {
@@ -17,19 +20,53 @@ const TOPIC_GLYPHS: Record<TopicId, string> = {
   regrouping: '🟢',
 };
 
-/** Visual aid (per UI spec) is a themed glyph band above the prompt — real illustrations are a post-hackathon swap. */
-export function QuestionCard({ prompt, promptTagalog, topicId, variant = 'default' }: QuestionCardProps) {
+const BATTLE_MIN_HEIGHT = 88;
+
+export function QuestionCard({
+  prompt,
+  promptTagalog,
+  topicId,
+  variant = 'default',
+  showHint,
+  hintEn,
+  hintTl,
+}: QuestionCardProps) {
   const battle = variant === 'battle';
+  const hintHeight = useRef(new Animated.Value(0)).current;
+  const [hintMeasured, setHintMeasured] = useState(0);
+
+  useEffect(() => {
+    Animated.timing(hintHeight, {
+      toValue: showHint ? hintMeasured : 0,
+      duration: 250,
+      useNativeDriver: false,
+    }).start();
+  }, [showHint, hintMeasured, hintHeight]);
+
+  const onHintLayout = (e: LayoutChangeEvent) => {
+    const h = e.nativeEvent.layout.height;
+    if (h > 0 && h !== hintMeasured) setHintMeasured(h);
+  };
+
   return (
     <View style={[styles.card, battle && styles.cardBattle]} testID="question-card">
       {!battle && <Text style={styles.visualAid}>{TOPIC_GLYPHS[topicId].repeat(3)}</Text>}
-      <BilingualText
-        en={prompt}
-        tl={promptTagalog}
-        size={battle ? 'sm' : 'lg'}
-        align={battle ? 'left' : 'center'}
-        color={battle ? '#fff' : undefined}
-      />
+      <View style={[battle && styles.battleContent]}>
+        <BilingualText
+          en={prompt}
+          tl={promptTagalog}
+          size={battle ? 'sm' : 'lg'}
+          align="center"
+          color={battle ? '#fff' : undefined}
+        />
+      </View>
+      {battle && hintEn && hintTl ? (
+        <Animated.View style={{ height: hintHeight, overflow: 'hidden' }}>
+          <View onLayout={onHintLayout} testID="hint-copy">
+            <BilingualText en={hintEn} tl={hintTl} size="sm" color="#FFE3C2" align="center" />
+          </View>
+        </Animated.View>
+      ) : null}
     </View>
   );
 }
@@ -47,9 +84,17 @@ const styles = StyleSheet.create({
   cardBattle: {
     backgroundColor: 'transparent',
     borderWidth: 0,
-    padding: 0,
-    alignItems: 'flex-start',
+    padding: spacing.sm,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 0,
+    minHeight: BATTLE_MIN_HEIGHT,
+    flex: 1,
+  },
+  battleContent: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
   },
   visualAid: { fontSize: 36, marginBottom: spacing.sm },
 });

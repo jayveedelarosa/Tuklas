@@ -9,6 +9,7 @@ import { getResponseForBeat } from '../repository/chatbotRepository';
 import { BilingualText } from '../../../common/components/BilingualText';
 import { PrimaryButton } from '../../../common/components/PrimaryButton';
 import { ChatBubble } from '../../../common/components/ChatBubble';
+import { BattleIntroTransition } from '../../../common/components/BattleIntroTransition';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'InteractiveLearning'>;
 
@@ -27,6 +28,7 @@ const TOTAL_BEATS = 5;
 export function InteractiveLearningScreen({ navigation, route }: Props) {
   const { levelId } = route.params;
   const [beat, setBeat] = useState(1);
+  const [battleIntroActive, setBattleIntroActive] = useState(false);
   const fade = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -34,7 +36,8 @@ export function InteractiveLearningScreen({ navigation, route }: Props) {
     Animated.timing(fade, { toValue: 1, duration: 400, useNativeDriver: true }).start();
   }, [beat]);
 
-  const goToBattle = () => navigation.replace('Battle', { levelId });
+  const goToBattle = () => setBattleIntroActive(true);
+  const finishBattleIntro = () => navigation.replace('Battle', { levelId });
   const goToNextBeat = () => setBeat((b) => Math.min(b + 1, TOTAL_BEATS));
 
   const caption = beat <= 4 ? getResponseForBeat(beat) : null;
@@ -78,6 +81,7 @@ export function InteractiveLearningScreen({ navigation, route }: Props) {
       </ScrollView>
 
       <ChatBubble currentBeat={beat <= 4 ? beat : null} />
+      {battleIntroActive && <BattleIntroTransition onComplete={finishBattleIntro} />}
     </SafeAreaView>
   );
 }

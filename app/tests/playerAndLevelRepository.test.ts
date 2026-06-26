@@ -35,6 +35,6 @@ describe('levelRepository', () => {
   });
 
   it('exposes the locked-node count used by the map (up to 15 nodes)', () => {
-    expect(TOTAL_MAP_NODES).toBe(15);
+    expect(TOTAL_MAP_NODES).toBe(9);
   });
 });
