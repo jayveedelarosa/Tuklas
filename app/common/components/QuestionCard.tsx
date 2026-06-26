@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Animated, LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 import { colors, radii, spacing } from '../theme/colors';
 import { BilingualText } from './BilingualText';
 import { TopicId } from '../../features/topics/models/question';
@@ -20,7 +20,7 @@ const TOPIC_GLYPHS: Record<TopicId, string> = {
   regrouping: '🟢',
 };
 
-const BATTLE_MIN_HEIGHT = 88;
+const HINT_ANIM_MS = 180;
 
 export function QuestionCard({
   prompt,
@@ -32,26 +32,36 @@ export function QuestionCard({
   hintTl,
 }: QuestionCardProps) {
   const battle = variant === 'battle';
-  const hintHeight = useRef(new Animated.Value(0)).current;
-  const [hintMeasured, setHintMeasured] = useState(0);
+  const hintOpacity = useRef(new Animated.Value(0)).current;
+  const hintTranslateY = useRef(new Animated.Value(-6)).current;
 
   useEffect(() => {
-    Animated.timing(hintHeight, {
-      toValue: showHint ? hintMeasured : 0,
-      duration: 250,
-      useNativeDriver: false,
-    }).start();
-  }, [showHint, hintMeasured, hintHeight]);
-
-  const onHintLayout = (e: LayoutChangeEvent) => {
-    const h = e.nativeEvent.layout.height;
-    if (h > 0 && h !== hintMeasured) setHintMeasured(h);
-  };
+    if (!battle) return;
+    if (showHint) {
+      Animated.parallel([
+        Animated.timing(hintOpacity, {
+          toValue: 1,
+          duration: HINT_ANIM_MS,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+        Animated.timing(hintTranslateY, {
+          toValue: 0,
+          duration: HINT_ANIM_MS,
+          easing: Easing.out(Easing.quad),
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      hintOpacity.setValue(0);
+      hintTranslateY.setValue(-6);
+    }
+  }, [showHint, battle, hintOpacity, hintTranslateY]);
 
   return (
     <View style={[styles.card, battle && styles.cardBattle]} testID="question-card">
       {!battle && <Text style={styles.visualAid}>{TOPIC_GLYPHS[topicId].repeat(3)}</Text>}
-      <View style={[battle && styles.battleContent]}>
+      <View style={battle ? styles.battleContent : undefined}>
         <BilingualText
           en={prompt}
           tl={promptTagalog}
@@ -60,11 +70,15 @@ export function QuestionCard({
           color={battle ? '#fff' : undefined}
         />
       </View>
-      {battle && hintEn && hintTl ? (
-        <Animated.View style={{ height: hintHeight, overflow: 'hidden' }}>
-          <View onLayout={onHintLayout} testID="hint-copy">
-            <BilingualText en={hintEn} tl={hintTl} size="sm" color="#FFE3C2" align="center" />
-          </View>
+      {battle && showHint && hintEn && hintTl ? (
+        <Animated.View
+          style={[
+            styles.hintWrap,
+            { opacity: hintOpacity, transform: [{ translateY: hintTranslateY }] },
+          ]}
+          testID="hint-copy"
+        >
+          <BilingualText en={hintEn} tl={hintTl} size="sm" color="#FFE3C2" align="center" />
         </Animated.View>
       ) : null}
     </View>
@@ -88,12 +102,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 0,
-    minHeight: BATTLE_MIN_HEIGHT,
-    flex: 1,
   },
   battleContent: {
     justifyContent: 'center',
     alignItems: 'center',
+    width: '100%',
+  },
+  hintWrap: {
+    marginTop: spacing.sm,
     width: '100%',
   },
   visualAid: { fontSize: 36, marginBottom: spacing.sm },

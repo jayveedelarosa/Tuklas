@@ -55,9 +55,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   baseCompact: {
-    minHeight: 0,
-    paddingVertical: 14,
-    paddingHorizontal: 16,
+    minHeight: 48,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
     marginBottom: 0,
   },
   selected: { borderColor: colors.secondary, backgroundColor: '#EAF6FC' },

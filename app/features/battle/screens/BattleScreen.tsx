@@ -66,6 +66,7 @@ export function BattleScreen({ navigation, route }: Props) {
   const [victoryStars, setVictoryStars] = useState(1);
   const wasDefeatedRef = useRef(false);
   const hpTick = useRef(0);
+  const [damageTarget, setDamageTarget] = useState<'player' | 'enemy' | null>(null);
 
   useEffect(() => {
     setBattleState(engine.state);
@@ -104,7 +105,8 @@ export function BattleScreen({ navigation, route }: Props) {
   const monsterHp = monsterMaxHp - engine.state.correctlyAnsweredIds.length;
   const hpRatio = monsterHp / monsterMaxHp;
   const playerHpRatio = engine.state.playerHp / engine.state.maxPlayerHp;
-  const hpKey = `${engine.state.playerHp}-${monsterHp}-${hpTick.current}`;
+  const enemyHpKey = damageTarget === 'enemy' ? `m-${hpTick.current}` : undefined;
+  const playerHpKey = damageTarget === 'player' ? `p-${hpTick.current}` : undefined;
 
   const handleChoicePress = (index: number) => {
     if (feedbackPhase === 'revealed') return;
@@ -113,9 +115,11 @@ export function BattleScreen({ navigation, route }: Props) {
 
   const handleSubmit = () => {
     if (selectedIndex === null) return;
+    const wasCorrect = selectedIndex === engine.currentQuestion.correctIndex;
     setDisplayedQuestion(engine.currentQuestion);
     setFeedbackPhase('revealed');
     engine.submit(selectedIndex);
+    setDamageTarget(wasCorrect ? 'enemy' : 'player');
     hpTick.current += 1;
   };
 
@@ -135,6 +139,7 @@ export function BattleScreen({ navigation, route }: Props) {
     setFeedbackPhase('answering');
     setShowHintCopy(false);
     setShowVictory(false);
+    setDamageTarget(null);
     hpTick.current += 1;
   };
 
@@ -205,13 +210,13 @@ export function BattleScreen({ navigation, route }: Props) {
                 hp={monsterHp}
                 maxHp={monsterMaxHp}
                 hpRatio={hpRatio}
-                hpAnimationKey={`m-${hpKey}`}
+                hpAnimationKey={enemyHpKey}
               />
               <PlayerBattleDisplay
                 hp={engine.state.playerHp}
                 maxHp={engine.state.maxPlayerHp}
                 hpRatio={playerHpRatio}
-                hpAnimationKey={`p-${hpKey}`}
+                hpAnimationKey={playerHpKey}
               />
             </View>
 
@@ -333,6 +338,7 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
     marginRight: spacing.sm,
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   feedbackCenter: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   menuBox: {
@@ -342,12 +348,13 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: colors.battleMenuBorder,
     padding: spacing.sm,
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
+    minHeight: 160,
   },
-  answeringStack: { flex: 1, alignSelf: 'stretch' },
-  choiceGrid: { flex: 1, gap: 10 },
-  choiceRow: { flex: 1, flexDirection: 'row', gap: 10 },
-  choiceCell: { flex: 1 },
+  answeringStack: { alignSelf: 'stretch' },
+  choiceGrid: { marginBottom: 10 },
+  choiceRow: { flexDirection: 'row', marginBottom: 10 },
+  choiceCell: { flex: 1, marginHorizontal: 4 },
   submitButton: { minHeight: 44, marginTop: 12, alignSelf: 'stretch' },
   nextButton: { minHeight: 44, alignSelf: 'center', width: '55%' },
 });

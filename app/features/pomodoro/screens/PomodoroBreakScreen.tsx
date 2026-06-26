@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Image, StyleSheet, Text, View } from 'react-native';
+import { Animated, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../navigation/types';
@@ -13,10 +13,14 @@ import { TuklasNoticedBanner } from '../../../common/components/TuklasNoticedBan
 import { StreakHeatmap } from '../../../common/components/StreakHeatmap';
 import { TuklasNotice } from '../../battle/service/noticeRules';
 import { tuklasMascot } from '../../../common/theme/characterArt';
-import { nextFocusQuote } from '../data/focusQuotes';
+import { nextFocusQuote, FocusQuote } from '../data/focusQuotes';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'PomodoroBreak'>;
 type Phase = 'idle' | 'session' | 'break';
+
+const BUBBLE_VISIBLE_MS = 4500;
+const BUBBLE_FADE_MS = 300;
+const BUBBLE_POP_MS = 200;
 
 function formatClock(totalSeconds: number): string {
   const minutes = Math.floor(totalSeconds / 60)
@@ -40,8 +44,56 @@ export function PomodoroBreakScreen({ navigation, route }: Props) {
   const [phase, setPhase] = useState<Phase>('idle');
   const [remainingSeconds, setRemainingSeconds] = useState(sessionLength * 60);
   const [notice, setNotice] = useState<TuklasNotice | null>(null);
-  const [quote] = useState(() => nextFocusQuote());
+  const [quote, setQuote] = useState<FocusQuote>(() => nextFocusQuote());
+  const [bubbleVisible, setBubbleVisible] = useState(false);
+  const bubbleOpacity = useRef(new Animated.Value(0)).current;
+  const bubbleScale = useRef(new Animated.Value(0.8)).current;
+  const dismissTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const startedAtRef = useRef(Date.now());
+
+  const clearDismissTimer = () => {
+    if (dismissTimer.current) {
+      clearTimeout(dismissTimer.current);
+      dismissTimer.current = null;
+    }
+  };
+
+  const hideBubble = (animated = true) => {
+    clearDismissTimer();
+    if (!animated) {
+      bubbleOpacity.setValue(0);
+      bubbleScale.setValue(0.8);
+      setBubbleVisible(false);
+      return;
+    }
+    Animated.parallel([
+      Animated.timing(bubbleOpacity, { toValue: 0, duration: BUBBLE_FADE_MS, useNativeDriver: true }),
+      Animated.timing(bubbleScale, { toValue: 0.8, duration: BUBBLE_FADE_MS, useNativeDriver: true }),
+    ]).start(() => setBubbleVisible(false));
+  };
+
+  const showBubble = (newQuote?: FocusQuote) => {
+    clearDismissTimer();
+    if (newQuote) setQuote(newQuote);
+    setBubbleVisible(true);
+    bubbleOpacity.setValue(0);
+    bubbleScale.setValue(0.8);
+    Animated.parallel([
+      Animated.timing(bubbleOpacity, { toValue: 1, duration: BUBBLE_POP_MS, useNativeDriver: true }),
+      Animated.timing(bubbleScale, { toValue: 1, duration: BUBBLE_POP_MS, useNativeDriver: true }),
+    ]).start();
+    dismissTimer.current = setTimeout(() => hideBubble(true), BUBBLE_VISIBLE_MS);
+  };
+
+  const handleTuklasPress = () => {
+    if (bubbleVisible) {
+      hideBubble(true);
+      return;
+    }
+    showBubble(nextFocusQuote());
+  };
+
+  useEffect(() => () => clearDismissTimer(), []);
 
   useEffect(() => {
     if (phase !== 'session' && phase !== 'break') return;
@@ -133,11 +185,21 @@ export function PomodoroBreakScreen({ navigation, route }: Props) {
         <StreakHeatmap history={history} />
       </View>
 
-      <View style={styles.tuklasCorner} testID="focus-tuklas-mascot">
-        <View style={styles.speechBubble}>
-          <BilingualText en={quote.en} tl={quote.tl} size="sm" align="center" />
-        </View>
-        <Image source={tuklasMascot.calm} style={styles.tuklasImage} />
+      <View style={styles.tuklasCorner} pointerEvents="box-none">
+        {bubbleVisible && (
+          <Animated.View
+            style={[
+              styles.speechBubble,
+              { opacity: bubbleOpacity, transform: [{ scale: bubbleScale }] },
+            ]}
+            testID="focus-tuklas-bubble"
+          >
+            <BilingualText en={quote.en} tl={quote.tl} size="sm" align="center" />
+          </Animated.View>
+        )}
+        <Pressable onPress={handleTuklasPress} testID="focus-tuklas-mascot" hitSlop={12}>
+          <Image source={tuklasMascot.calm} style={styles.tuklasImage} />
+        </Pressable>
       </View>
     </SafeAreaView>
   );
@@ -145,7 +207,7 @@ export function PomodoroBreakScreen({ navigation, route }: Props) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.background, flexDirection: 'row', padding: spacing.lg },
-  focusBlock: { flex: 1.2, alignItems: 'center', justifyContent: 'center' },
+  focusBlock: { flex: 1.1, alignItems: 'center', justifyContent: 'center', paddingRight: spacing.md },
   timerCircle: {
     width: 180,
     height: 180,
@@ -185,7 +247,7 @@ const styles = StyleSheet.create({
     bottom: spacing.lg,
     right: spacing.lg,
     alignItems: 'flex-end',
-    maxWidth: 220,
+    maxWidth: 240,
   },
   speechBubble: {
     backgroundColor: colors.surface,
@@ -193,8 +255,8 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: colors.primary,
     padding: spacing.sm,
-    marginBottom: spacing.xs,
-    maxWidth: 200,
+    marginBottom: spacing.sm,
+    maxWidth: 220,
   },
-  tuklasImage: { width: 72, height: 72, resizeMode: 'contain' },
+  tuklasImage: { width: 120, height: 120, resizeMode: 'contain' },
 });

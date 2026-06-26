@@ -4,7 +4,7 @@ import { colors, radii } from '../theme/colors';
 
 interface HealthBarProps {
   ratio: number;
-  /** Bump to re-run drain animation when HP changes. */
+  /** When set, plays flash + drain. Omit to update silently (no damage on this side). */
   animationKey?: string | number;
 }
 
@@ -13,7 +13,7 @@ export function HealthBar({ ratio, animationKey }: HealthBarProps) {
   const clamped = Math.max(0, Math.min(1, ratio));
   const widthAnim = useRef(new Animated.Value(clamped)).current;
   const flash = useRef(new Animated.Value(0)).current;
-  const prevKey = useRef(animationKey);
+  const prevKey = useRef<string | number | undefined>(undefined);
 
   useEffect(() => {
     if (animationKey !== undefined && prevKey.current !== animationKey) {
@@ -28,7 +28,9 @@ export function HealthBar({ ratio, animationKey }: HealthBarProps) {
         }),
       ]).start();
       prevKey.current = animationKey;
-    } else {
+    } else if (animationKey === undefined) {
+      widthAnim.setValue(clamped);
+    } else if (prevKey.current === animationKey) {
       widthAnim.setValue(clamped);
     }
   }, [clamped, animationKey, widthAnim, flash]);

@@ -2,9 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { Animated, StyleSheet, Text, View } from 'react-native';
 import { BilingualText } from './BilingualText';
 import { PrimaryButton } from './PrimaryButton';
-import { BattleIntroTransition } from './BattleIntroTransition';
 import { colors, radii, spacing } from '../theme/colors';
 import { fonts, fontSizes, lineHeights } from '../theme/typography';
+
+const FADE_IN_MS = 280;
 
 interface BattleVictoryScreenProps {
   characterName: string;
@@ -46,6 +47,20 @@ function AnimatedStars({ count }: { count: number }) {
   );
 }
 
+function FadeInCard({ children }: { children: React.ReactNode }) {
+  const fade = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    Animated.timing(fade, {
+      toValue: 1,
+      duration: FADE_IN_MS,
+      useNativeDriver: true,
+    }).start();
+  }, [fade]);
+
+  return <Animated.View style={{ opacity: fade, width: '100%', alignItems: 'center' }}>{children}</Animated.View>;
+}
+
 export function BattleVictoryScreen({
   characterName,
   starsEarned,
@@ -54,13 +69,10 @@ export function BattleVictoryScreen({
   onContinue,
   onReplay,
 }: BattleVictoryScreenProps) {
-  const [introDone, setIntroDone] = React.useState(process.env.JEST_WORKER_ID !== undefined);
-
   return (
     <View style={styles.overlay} testID="victory-block">
-      {!introDone && <BattleIntroTransition onComplete={() => setIntroDone(true)} />}
-      {introDone && (
-        <View style={styles.card}>
+      <View style={styles.card}>
+        <FadeInCard>
           <Text style={styles.sparkle}>✨🎉✨</Text>
           <BilingualText en="Victory!" tl="Tagumpay!" size="lg" align="center" />
           <Text style={styles.subtitle}>
@@ -84,8 +96,8 @@ export function BattleVictoryScreen({
               style={styles.btn}
             />
           </View>
-        </View>
-      )}
+        </FadeInCard>
+      </View>
     </View>
   );
 }
@@ -100,32 +112,34 @@ export function BattleDefeatScreen({ characterName, onRetry, onMap }: BattleDefe
   return (
     <View style={styles.overlay} testID="defeat-block">
       <View style={styles.card}>
-        <Text style={styles.somber}>💪</Text>
-        <BilingualText en="Try Again!" tl="Subukan Ulit!" size="lg" align="center" />
-        <BilingualText
-          en="You'll get it next time!"
-          tl="Kaya mo yan!"
-          size="sm"
-          align="center"
-        />
-        <Text style={styles.subtitle}>{characterName} won this round.</Text>
-        <View style={styles.btnRow}>
-          <PrimaryButton
-            label="Try Again"
-            labelTagalog="Ulitin"
-            onPress={onRetry}
-            testID="retry-button"
-            style={styles.btn}
+        <FadeInCard>
+          <Text style={styles.somber}>💪</Text>
+          <BilingualText en="Try Again!" tl="Subukan Ulit!" size="lg" align="center" />
+          <BilingualText
+            en="You'll get it next time!"
+            tl="Kaya mo yan!"
+            size="sm"
+            align="center"
           />
-          <PrimaryButton
-            label="Map"
-            labelTagalog="Mapa"
-            variant="ghost"
-            onPress={onMap}
-            testID="defeat-map-button"
-            style={styles.btn}
-          />
-        </View>
+          <Text style={styles.subtitle}>{characterName} won this round.</Text>
+          <View style={styles.btnRow}>
+            <PrimaryButton
+              label="Try Again"
+              labelTagalog="Ulitin"
+              onPress={onRetry}
+              testID="retry-button"
+              style={styles.btn}
+            />
+            <PrimaryButton
+              label="Map"
+              labelTagalog="Mapa"
+              variant="ghost"
+              onPress={onMap}
+              testID="defeat-map-button"
+              style={styles.btn}
+            />
+          </View>
+        </FadeInCard>
       </View>
     </View>
   );
