@@ -1,0 +1,155 @@
+{
+  "levels": [
+    {
+      "id": "level1",
+      "name": "Sitio Bangungot",
+      "characterName": "Tikbalang",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level2",
+      "name": "Look ng Aswang",
+      "characterName": "Aswang",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level3",
+      "name": "Bukid ng Bayabas",
+      "characterName": "Sigbin",
+      "playable": true,
+      "questions": [
+        {
+          "id": "l3_q1",
+          "topic": "regrouping_ones_to_tens",
+          "difficultyTier": -1,
+          "difficultyBeta": -0.5,
+          "prompt": "May 14 saging si Mary. Ilan ang katumbas nito sa tens at ones?",
+          "choices": ["1 tens 4 ones", "1 tens 3 ones", "4 tens 1 ones", "0 tens 14 ones"],
+          "correctIndex": 0
+        },
+        {
+          "id": "l3_q2",
+          "topic": "regrouping_ones_to_tens",
+          "difficultyTier": 0,
+          "difficultyBeta": 0,
+          "prompt": "Bumili si Mary ng 25 bayabas. Ano ang katumbas nito?",
+          "choices": ["2 tens 5 ones", "5 tens 2 ones", "2 tens 0 ones", "25 tens 0 ones"],
+          "correctIndex": 0
+        },
+        {
+          "id": "l3_q3",
+          "topic": "regrouping_ones_to_tens",
+          "difficultyTier": 0,
+          "difficultyBeta": 0.1,
+          "prompt": "26 santol ay katumbas ng ilang tens at ones?",
+          "choices": ["2 tens 6 ones", "6 tens 2 ones", "1 tens 6 ones", "2 tens 0 ones"],
+          "correctIndex": 0
+        },
+        {
+          "id": "l3_q4",
+          "topic": "regrouping_ones_to_hundreds",
+          "difficultyTier": 1,
+          "difficultyBeta": 0.6,
+          "prompt": "Ang 40 chico ay may ilang pangkat ng tigsasampu?",
+          "choices": ["4 pangkat, 0 naiwan", "40 pangkat, 0 naiwan", "4 pangkat, 4 naiwan", "0 pangkat, 40 naiwan"],
+          "correctIndex": 0
+        },
+        {
+          "id": "l3_q5",
+          "topic": "regrouping_ones_to_hundreds",
+          "difficultyTier": 1,
+          "difficultyBeta": 0.8,
+          "prompt": "Ang 125 ay katumbas ng ilang hundreds, tens, at ones?",
+          "choices": ["1 hundreds, 2 tens, 5 ones", "1 hundreds, 5 tens, 2 ones", "5 hundreds, 2 tens, 1 ones", "1 hundreds, 0 tens, 25 ones"],
+          "correctIndex": 0
+        }
+      ]
+    },
+    {
+      "id": "level4",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level5",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level6",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level7",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level8",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level9",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level10",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level11",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level12",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level13",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level14",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    },
+    {
+      "id": "level15",
+      "name": "Coming soon",
+      "characterName": "Locked",
+      "playable": false,
+      "questions": []
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+{
+  "topicId": "regrouping",
+  "_source": "DepEd Math 1, Quarter 1, Module 3 — Regrouping Sets of Ones into Sets of Tens and Sets of Tens into Hundreds Using Objects. Mirrors data/levels.json level3's question set 1:1 (same ids/choices/correctIndex) — that file stays the single source of truth for the playable Level 3 battle and its recorded demo battleScripts; this bank exists so Topic C ships as a real bundled, independently loadable question bank per BR-01/BR-05.",
+  "questions": [
+    {
+      "id": "l3_q1",
+      "topicId": "regrouping",
+      "prompt": "Mary has 14 bananas. What is the equivalent in tens and ones?",
+      "promptTagalog": "May 14 saging si Mary. Ilan ang katumbas nito sa tens at ones?",
+      "difficultyTier": -1,
+      "difficultyBeta": -0.5,
+      "choices": ["1 tens 4 ones", "1 tens 3 ones", "4 tens 1 ones", "0 tens 14 ones"],
+      "correctIndex": 0,
+      "visualAid": "mary-palengke-saging",
+      "sourceModule": "Module 3"
+    },
+    {
+      "id": "l3_q2",
+      "topicId": "regrouping",
+      "prompt": "Mary bought 25 guavas. What is the equivalent?",
+      "promptTagalog": "Bumili si Mary ng 25 bayabas. Ano ang katumbas nito?",
+      "difficultyTier": 0,
+      "difficultyBeta": 0,
+      "choices": ["2 tens 5 ones", "5 tens 2 ones", "2 tens 0 ones", "25 tens 0 ones"],
+      "correctIndex": 0,
+      "visualAid": "mary-palengke-bayabas",
+      "sourceModule": "Module 3"
+    },
+    {
+      "id": "l3_q3",
+      "topicId": "regrouping",
+      "prompt": "26 santol fruits are equivalent to how many tens and ones?",
+      "promptTagalog": "26 santol ay katumbas ng ilang tens at ones?",
+      "difficultyTier": 0,
+      "difficultyBeta": 0.1,
+      "choices": ["2 tens 6 ones", "6 tens 2 ones", "1 tens 6 ones", "2 tens 0 ones"],
+      "correctIndex": 0,
+      "visualAid": "mary-palengke-santol",
+      "sourceModule": "Module 3"
+    },
+    {
+      "id": "l3_q4",
+      "topicId": "regrouping",
+      "prompt": "The 40 chico fruits make how many groups of ten?",
+      "promptTagalog": "Ang 40 chico ay may ilang pangkat ng tigsasampu?",
+      "difficultyTier": 1,
+      "difficultyBeta": 0.6,
+      "choices": ["4 pangkat, 0 naiwan", "40 pangkat, 0 naiwan", "4 pangkat, 4 naiwan", "0 pangkat, 40 naiwan"],
+      "correctIndex": 0,
+      "visualAid": "mary-palengke-chico",
+      "sourceModule": "Module 3"
+    },
+    {
+      "id": "l3_q5",
+      "topicId": "regrouping",
+      "prompt": "What is 125 equivalent to in hundreds, tens, and ones?",
+      "promptTagalog": "Ang 125 ay katumbas ng ilang hundreds, tens, at ones?",
+      "difficultyTier": 1,
+      "difficultyBeta": 0.8,
+      "choices": ["1 hundreds, 2 tens, 5 ones", "1 hundreds, 5 tens, 2 ones", "5 hundreds, 2 tens, 1 ones", "1 hundreds, 0 tens, 25 ones"],
+      "correctIndex": 0,
+      "visualAid": "karl-andria-mangga-baskets",
+      "sourceModule": "Module 3"
+    }
+  ]
+}

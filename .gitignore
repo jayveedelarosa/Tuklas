@@ -1,0 +1,51 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+node_modules
+
+# dead assets — superseded by Level 3.png's composed background; not require()'d anywhere
+assets/characters/BuboyBattle.png
+assets/characters/SigbinBattle.png
+assets/characters/Buboy(main character).png
+assets/levels/battleScreen_bg \[L\].png
+assets/levels/battleScreen \[L\].png
+assets/levels/Battle scene.png
+assets/levels/Characters in battle scene.png

@@ -1,0 +1,179 @@
+{
+  "players": [
+    {
+      "id": "player1",
+      "name": "Player 1",
+      "completedLevelIds": ["level1", "level2", "level3"],
+      "unlockedCharacterIds": ["tikbalang", "aswang", "sigbin"],
+      "streakCount": 12,
+      "thetaStudent": 0.7,
+      "pomodoroSessionHistory": [
+        {"completed": true,  "date": "2026-06-12", "plannedLength": 25, "actualLength": 25},
+        {"completed": true,  "date": "2026-06-13", "plannedLength": 25, "actualLength": 27},
+        {"completed": true,  "date": "2026-06-14", "plannedLength": 30, "actualLength": 30},
+        {"completed": false, "date": "2026-06-15", "plannedLength": 30, "actualLength": 11},
+        {"completed": true,  "date": "2026-06-16", "plannedLength": 30, "actualLength": 31},
+        {"completed": true,  "date": "2026-06-18", "plannedLength": 30, "actualLength": 30},
+        {"completed": true,  "date": "2026-06-19", "plannedLength": 35, "actualLength": 33},
+        {"completed": true,  "date": "2026-06-20", "plannedLength": 35, "actualLength": 35},
+        {"completed": true,  "date": "2026-06-21", "plannedLength": 35, "actualLength": 36},
+        {"completed": true,  "date": "2026-06-23", "plannedLength": 35, "actualLength": 34},
+        {"completed": true,  "date": "2026-06-24", "plannedLength": 35, "actualLength": 35},
+        {"completed": true,  "date": "2026-06-25", "plannedLength": 35, "actualLength": 35}
+      ],
+      "battleScript": {
+        "_description": "Player 1 is the confident-ability demo: starts above all tier-0 betas, answers correctly and fast, engine should escalate difficulty mid-battle. Used for video #1 — 'Tuklas noticed you've got this' trigger.",
+        "levelId": "level3",
+        "narrativeLabel": "confident_escalation",
+        "steps": [
+          {
+            "step": 1,
+            "questionId": "l3_q2",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 2400,
+            "expectedEngineMessage": null,
+            "expectedNextDifficultyTier": 1
+          },
+          {
+            "step": 2,
+            "questionId": "l3_q4",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 1900,
+            "expectedEngineMessage": "Tuklas noticed you've got this — here's a tougher one",
+            "expectedNextDifficultyTier": 1
+          },
+          {
+            "step": 3,
+            "questionId": "l3_q5",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 2100,
+            "expectedEngineMessage": null,
+            "expectedNextDifficultyTier": null
+          }
+        ],
+        "resultingThetaStudent": 1.05,
+        "endsWithCharacterUnlock": null
+      }
+    },
+    {
+      "id": "player2",
+      "name": "Player 2",
+      "completedLevelIds": ["level1", "level2", "level3"],
+      "unlockedCharacterIds": ["tikbalang", "aswang", "sigbin"],
+      "streakCount": 7,
+      "thetaStudent": 0.1,
+      "pomodoroSessionHistory": [
+        {"completed": true,  "date": "2026-06-19", "plannedLength": 25, "actualLength": 24},
+        {"completed": false, "date": "2026-06-20", "plannedLength": 25, "actualLength": 9},
+        {"completed": true,  "date": "2026-06-21", "plannedLength": 25, "actualLength": 25},
+        {"completed": true,  "date": "2026-06-22", "plannedLength": 25, "actualLength": 26},
+        {"completed": false, "date": "2026-06-23", "plannedLength": 25, "actualLength": 14},
+        {"completed": true,  "date": "2026-06-24", "plannedLength": 20, "actualLength": 20},
+        {"completed": true,  "date": "2026-06-25", "plannedLength": 20, "actualLength": 21}
+      ],
+      "battleScript": {
+        "_description": "Player 2 is the steady-middle demo: starts near tier-0 beta, mixes one wrong answer with correct ones, engine stays roughly level — no escalation or de-escalation message fires. Used for video #2 — the 'engine listens but doesn't overreact' steady case.",
+        "levelId": "level3",
+        "narrativeLabel": "steady_no_trigger",
+        "steps": [
+          {
+            "step": 1,
+            "questionId": "l3_q1",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 4200,
+            "expectedEngineMessage": null,
+            "expectedNextDifficultyTier": 0
+          },
+          {
+            "step": 2,
+            "questionId": "l3_q3",
+            "tappedChoiceIndex": 1,
+            "isCorrect": false,
+            "responseTimeMs": 5100,
+            "expectedEngineMessage": null,
+            "expectedHintFrequencyDelta": "+0.1",
+            "retryQuestionId": "l3_q3",
+            "retryStep": {
+              "tappedChoiceIndex": 0,
+              "isCorrect": true,
+              "responseTimeMs": 3300
+            },
+            "expectedNextDifficultyTier": 0
+          },
+          {
+            "step": 3,
+            "questionId": "l3_q2",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 3800,
+            "expectedEngineMessage": null,
+            "expectedNextDifficultyTier": null
+          }
+        ],
+        "resultingThetaStudent": 0.22,
+        "endsWithCharacterUnlock": null
+      }
+    },
+    {
+      "id": "player3",
+      "name": "Player 3",
+      "completedLevelIds": ["level1", "level2"],
+      "unlockedCharacterIds": ["tikbalang", "aswang"],
+      "streakCount": 1,
+      "thetaStudent": 0,
+      "pomodoroSessionHistory": [
+        {"completed": false, "date": "2026-06-25", "plannedLength": 25, "actualLength": 8}
+      ],
+      "battleScript": {
+        "_description": "Player 3 is the struggling-fresh-start demo: starts at theta 0, two wrong answers in a row trigger both the difficulty-down message and the hint-frequency message, then a supported correct answer clears the set and unlocks character #3 live on camera. Used for video #3 — the flagship 'visible struggle to visible support' arc.",
+        "levelId": "level3",
+        "narrativeLabel": "struggle_then_support_unlock",
+        "steps": [
+          {
+            "step": 1,
+            "questionId": "l3_q2",
+            "tappedChoiceIndex": 2,
+            "isCorrect": false,
+            "responseTimeMs": 7600,
+            "expectedEngineMessage": null,
+            "expectedHintFrequencyDelta": "+0.15",
+            "retryQuestionId": "l3_q2",
+            "retryStep": {
+              "tappedChoiceIndex": 1,
+              "isCorrect": false,
+              "responseTimeMs": 6800
+            },
+            "expectedEngineMessageAfterSecondMiss": "Tuklas noticed you're finding this tricky — here's an easier question",
+            "expectedNextDifficultyTier": -1
+          },
+          {
+            "step": 2,
+            "questionId": "l3_q1",
+            "hintShown": true,
+            "expectedEngineMessage": "Tuklas noticed you might want a hint here",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 5200,
+            "expectedNextDifficultyTier": -1
+          },
+          {
+            "step": 3,
+            "questionId": "l3_q1",
+            "_note": "second tier -1 item reused with light rephrase at build time if a distinct -1 item is not authored",
+            "tappedChoiceIndex": 0,
+            "isCorrect": true,
+            "responseTimeMs": 4000,
+            "expectedEngineMessage": null,
+            "expectedNextDifficultyTier": null
+          }
+        ],
+        "resultingThetaStudent": -0.18,
+        "endsWithCharacterUnlock": "sigbin"
+      }
+    }
+  ]
+}

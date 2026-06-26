@@ -1,0 +1,41 @@
+{
+  "_description": "Hardcoded response table for the Phase 2 chatbot icon. Not an LLM call — pure lookup by triggerKey. Exists so all 3 player videos show identical, predictable chatbot behavior with zero variance.",
+  "responses": [
+    {
+      "triggerKey": "phase2_tap_during_pile",
+      "appliesDuringBeat": 1,
+      "displayText": "Marami talaga 'no? Tingnan natin paano ito mabibilang nang mabilis.",
+      "displayTextEn": "That's a lot, right? Let's see how we can count it quickly."
+    },
+    {
+      "triggerKey": "phase2_tap_during_grouping",
+      "appliesDuringBeat": 2,
+      "displayText": "Pangkat ng sampu! Mas madaling bilangin kapag pinagsama-sama.",
+      "displayTextEn": "Groups of ten! Easier to count when they're grouped together."
+    },
+    {
+      "triggerKey": "phase2_tap_during_leftovers",
+      "appliesDuringBeat": 3,
+      "displayText": "Ang mga natirang piraso ay tig-iisa lang — di na kasali sa pangkat.",
+      "displayTextEn": "The leftover pieces are just ones — they don't fit a full group."
+    },
+    {
+      "triggerKey": "phase2_tap_during_equation",
+      "appliesDuringBeat": 4,
+      "displayText": "Tens at ones — 'yan lang ang dapat mong tandaan!",
+      "displayTextEn": "Tens and ones — that's all you need to remember!"
+    },
+    {
+      "triggerKey": "phase2_tap_no_active_beat",
+      "appliesDuringBeat": null,
+      "displayText": "Handa ka na ba? Pindutin ang 'Let's go' kapag handa na.",
+      "displayTextEn": "Are you ready? Tap 'Let's go' when you're set."
+    },
+    {
+      "triggerKey": "default_fallback",
+      "appliesDuringBeat": null,
+      "displayText": "Subukan mong pindutin ang mga bagay sa screen para alamin pa!",
+      "displayTextEn": "Try tapping things on screen to learn more!"
+    }
+  ]
+}

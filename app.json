@@ -1,0 +1,22 @@
+{
+  "expo": {
+    "name": "Tuklas",
+    "slug": "tuklas",
+    "scheme": "tuklas",
+    "version": "1.0.0",
+    "orientation": "landscape",
+    "userInterfaceStyle": "light",
+    "icon": "./assets/app logo/App Logo.png",
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.haribirds.tuklas",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": []
+  }
+}

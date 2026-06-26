@@ -1,0 +1,66 @@
+{
+  "topicId": "number-sense",
+  "_source": "DepEd Math 1, Quarter 1, Module 1 — Visualizing and Representing Numbers from 0 to 100. Characters/numbers drawn from the module's Lorna-at-the-bookstore word problem and its tambilang/salita matching exercise.",
+  "questions": [
+    {
+      "id": "ns_q1",
+      "topicId": "number-sense",
+      "prompt": "Lorna bought 5 pencils at the bookstore. How do you write 5 in words?",
+      "promptTagalog": "Bumili si Lorna ng 5 lapis sa bookstore. Paano isusulat sa salita ang 5?",
+      "difficultyTier": -1,
+      "difficultyBeta": -0.5,
+      "choices": ["Lima", "Apat", "Anim", "Pito"],
+      "correctIndex": 0,
+      "visualAid": "lorna-bookstore-pencils",
+      "sourceModule": "Module 1"
+    },
+    {
+      "id": "ns_q2",
+      "topicId": "number-sense",
+      "prompt": "Which word matches the number 27?",
+      "promptTagalog": "Anong salita ang tumutugma sa bilang 27?",
+      "difficultyTier": 0,
+      "difficultyBeta": 0,
+      "choices": ["Dalawampu't pito", "Dalawampu't isa", "Pitumpu't dalawa", "Dalawampu"],
+      "correctIndex": 0,
+      "visualAid": "number-line-27",
+      "sourceModule": "Module 1"
+    },
+    {
+      "id": "ns_q3",
+      "topicId": "number-sense",
+      "prompt": "Which numeral matches the word 'Siyam'?",
+      "promptTagalog": "Alin sa sumusunod ang tamang tambilang para sa 'Siyam'?",
+      "difficultyTier": 0,
+      "difficultyBeta": 0.1,
+      "choices": ["9", "6", "19", "90"],
+      "correctIndex": 0,
+      "visualAid": "lorna-bookstore-notebooks",
+      "sourceModule": "Module 1"
+    },
+    {
+      "id": "ns_q4",
+      "topicId": "number-sense",
+      "prompt": "Lorna bought 63 pieces of school supplies. How do you write 63 in words?",
+      "promptTagalog": "Bumili si Lorna ng 63 piraso ng kagamitan sa bookstore. Paano isusulat sa salita ang 63?",
+      "difficultyTier": 1,
+      "difficultyBeta": 0.6,
+      "choices": ["Animnapu't tatlo", "Animnapu't isa", "Tatlumpu't anim", "Animnapu"],
+      "correctIndex": 0,
+      "visualAid": "lorna-bookstore-supplies",
+      "sourceModule": "Module 1"
+    },
+    {
+      "id": "ns_q5",
+      "topicId": "number-sense",
+      "prompt": "What is 74 written in words?",
+      "promptTagalog": "Ano ang katumbas ng 74 sa salita?",
+      "difficultyTier": 1,
+      "difficultyBeta": 0.8,
+      "choices": ["Pitumpu't apat", "Pitumpu't anim", "Apatnapu't pito", "Pitumpu"],
+      "correctIndex": 0,
+      "visualAid": "number-line-74",
+      "sourceModule": "Module 1"
+    }
+  ]
+}

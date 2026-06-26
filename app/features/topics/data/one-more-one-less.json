@@ -1,0 +1,66 @@
+{
+  "topicId": "one-more-one-less",
+  "_source": "DepEd Math 1, Quarter 1, Module 2 — Identifying a Number that is One More or One Less from a Given Number. Drawn from the module's Lina-and-Karla mango-picking word problem and its higit-ng-isa/mas-kaunti-ng-isa drill numbers.",
+  "questions": [
+    {
+      "id": "omol_q1",
+      "topicId": "one-more-one-less",
+      "prompt": "Karla had 7 mangoes at first. What is one more than 7?",
+      "promptTagalog": "Si Karla ay may 7 mangga noong una. Ilan ang 7 higit ng isa?",
+      "difficultyTier": -1,
+      "difficultyBeta": -0.5,
+      "choices": ["8", "6", "7", "9"],
+      "correctIndex": 0,
+      "visualAid": "lina-karla-mangga-basket",
+      "sourceModule": "Module 2"
+    },
+    {
+      "id": "omol_q2",
+      "topicId": "one-more-one-less",
+      "prompt": "What is one more than 45?",
+      "promptTagalog": "45 higit ng isa ay ____.",
+      "difficultyTier": 0,
+      "difficultyBeta": 0,
+      "choices": ["46", "44", "45", "47"],
+      "correctIndex": 0,
+      "visualAid": "number-box-45",
+      "sourceModule": "Module 2"
+    },
+    {
+      "id": "omol_q3",
+      "topicId": "one-more-one-less",
+      "prompt": "What is one less than 79?",
+      "promptTagalog": "79 mas kaunti ng isa ay ____.",
+      "difficultyTier": 0,
+      "difficultyBeta": 0.1,
+      "choices": ["78", "80", "79", "77"],
+      "correctIndex": 0,
+      "visualAid": "number-box-79",
+      "sourceModule": "Module 2"
+    },
+    {
+      "id": "omol_q4",
+      "topicId": "one-more-one-less",
+      "prompt": "What is one less than 30?",
+      "promptTagalog": "30 mas kaunti ng isa ay ____.",
+      "difficultyTier": 1,
+      "difficultyBeta": 0.6,
+      "choices": ["29", "31", "28", "30"],
+      "correctIndex": 0,
+      "visualAid": "number-box-30",
+      "sourceModule": "Module 2"
+    },
+    {
+      "id": "omol_q5",
+      "topicId": "one-more-one-less",
+      "prompt": "Lina picked one more mango for Karla. If Karla had 88, how many does she have now?",
+      "promptTagalog": "Pumitas pa ng isa si Lina para kay Karla. Kung si Karla ay may 88, ilan na ang mangga niya ngayon?",
+      "difficultyTier": 1,
+      "difficultyBeta": 0.8,
+      "choices": ["89", "87", "90", "86"],
+      "correctIndex": 0,
+      "visualAid": "lina-karla-mangga-basket",
+      "sourceModule": "Module 2"
+    }
+  ]
+}
